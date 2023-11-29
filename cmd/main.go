@@ -31,6 +31,9 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/healthz"
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
+
+	cloudresourcesv1beta1 "github.com/tmilos77/cloud-resources-control-plane/api/cloud-resources/v1beta1"
+	cloudresourcescontroller "github.com/tmilos77/cloud-resources-control-plane/internal/controller/cloud-resources"
 	//+kubebuilder:scaffold:imports
 )
 
@@ -42,6 +45,7 @@ var (
 func init() {
 	utilruntime.Must(clientgoscheme.AddToScheme(scheme))
 
+	utilruntime.Must(cloudresourcesv1beta1.AddToScheme(scheme))
 	//+kubebuilder:scaffold:scheme
 }
 
@@ -85,6 +89,34 @@ func main() {
 		os.Exit(1)
 	}
 
+	if err = (&cloudresourcescontroller.GcpVpcPeeringMirrorReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "GcpVpcPeeringMirror")
+		os.Exit(1)
+	}
+	if err = (&cloudresourcescontroller.AzureVpcPeeringMirrorReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "AzureVpcPeeringMirror")
+		os.Exit(1)
+	}
+	if err = (&cloudresourcescontroller.AwsVpcPeeringMirrorReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "AwsVpcPeeringMirror")
+		os.Exit(1)
+	}
+	if err = (&cloudresourcescontroller.NfsVolumeMirrorReconciler{
+		Client: mgr.GetClient(),
+		Scheme: mgr.GetScheme(),
+	}).SetupWithManager(mgr); err != nil {
+		setupLog.Error(err, "unable to create controller", "controller", "NfsVolumeMirror")
+		os.Exit(1)
+	}
 	//+kubebuilder:scaffold:builder
 
 	if err := mgr.AddHealthzCheck("healthz", healthz.Ping); err != nil {
