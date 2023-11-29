@@ -1,0 +1,12 @@
+apiVersion: cloud-resources.kyma-project.io/v1beta1
+kind: AwsVpcPeeringMirror
+metadata:
+  labels:
+    app.kubernetes.io/name: awsvpcpeeringmirror
+    app.kubernetes.io/instance: awsvpcpeeringmirror-sample
+    app.kubernetes.io/part-of: cloud-resources-control-plane
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: cloud-resources-control-plane
+  name: awsvpcpeeringmirror-sample
+spec:
+  # TODO(user): Add fields here

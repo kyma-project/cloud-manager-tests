@@ -1,0 +1,12 @@
+apiVersion: cloud-resources.kyma-project.io/v1beta1
+kind: NfsVolumeMirror
+metadata:
+  labels:
+    app.kubernetes.io/name: nfsvolumemirror
+    app.kubernetes.io/instance: nfsvolumemirror-sample
+    app.kubernetes.io/part-of: cloud-resources-control-plane
+    app.kubernetes.io/managed-by: kustomize
+    app.kubernetes.io/created-by: cloud-resources-control-plane
+  name: nfsvolumemirror-sample
+spec:
+  # TODO(user): Add fields here
