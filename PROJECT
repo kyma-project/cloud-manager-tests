@@ -7,7 +7,7 @@ layout:
 - go.kubebuilder.io/v4
 multigroup: true
 projectName: cloud-resources-control-plane
-repo: github.com/tmilos77/cloud-resources-control-plane
+repo: github.com/kyma-project/cloud-resources-control-plane
 resources:
 - api:
     crdVersion: v1
@@ -16,7 +16,7 @@ resources:
   domain: kyma-project.io
   group: cloud-resources
   kind: GcpVpcPeeringMirror
-  path: github.com/tmilos77/cloud-resources-control-plane/api/cloud-resources/v1beta1
+  path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -25,7 +25,7 @@ resources:
   domain: kyma-project.io
   group: cloud-resources
   kind: AzureVpcPeeringMirror
-  path: github.com/tmilos77/cloud-resources-control-plane/api/cloud-resources/v1beta1
+  path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -34,7 +34,7 @@ resources:
   domain: kyma-project.io
   group: cloud-resources
   kind: AwsVpcPeeringMirror
-  path: github.com/tmilos77/cloud-resources-control-plane/api/cloud-resources/v1beta1
+  path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
   version: v1beta1
 - api:
     crdVersion: v1
@@ -43,6 +43,6 @@ resources:
   domain: kyma-project.io
   group: cloud-resources
   kind: NfsVolumeMirror
-  path: github.com/tmilos77/cloud-resources-control-plane/api/cloud-resources/v1beta1
+  path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
   version: v1beta1
 version: "3"

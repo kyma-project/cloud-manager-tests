@@ -32,8 +32,8 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/log/zap"
 	metricsserver "sigs.k8s.io/controller-runtime/pkg/metrics/server"
 
-	cloudresourcesv1beta1 "github.com/tmilos77/cloud-resources-control-plane/api/cloud-resources/v1beta1"
-	cloudresourcescontroller "github.com/tmilos77/cloud-resources-control-plane/internal/controller/cloud-resources"
+	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
+	cloudresourcescontroller "github.com/kyma-project/cloud-resources-control-plane/internal/controller/cloud-resources"
 	//+kubebuilder:scaffold:imports
 )
 

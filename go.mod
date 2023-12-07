@@ -1,4 +1,4 @@
-module github.com/tmilos77/cloud-resources-control-plane
+module github.com/kyma-project/cloud-resources-control-plane
 
 go 1.20
 
