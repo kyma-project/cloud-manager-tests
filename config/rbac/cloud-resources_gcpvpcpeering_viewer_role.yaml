@@ -1,31 +1,27 @@
-# permissions for end users to edit gcpvpcpeeringmirrors.
+# permissions for end users to view gcpvpcpeerings.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/instance: gcpvpcpeeringmirror-editor-role
+    app.kubernetes.io/instance: gcpvpcpeering-viewer-role
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: cloud-resources-control-plane
     app.kubernetes.io/part-of: cloud-resources-control-plane
     app.kubernetes.io/managed-by: kustomize
-  name: gcpvpcpeeringmirror-editor-role
+  name: gcpvpcpeering-viewer-role
 rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - gcpvpcpeeringmirrors
+  - gcpvpcpeerings
   verbs:
-  - create
-  - delete
   - get
   - list
-  - patch
-  - update
   - watch
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - gcpvpcpeeringmirrors/status
+  - gcpvpcpeerings/status
   verbs:
   - get

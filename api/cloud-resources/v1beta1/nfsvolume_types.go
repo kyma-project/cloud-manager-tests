@@ -23,17 +23,17 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// AwsVpcPeeringMirrorSpec defines the desired state of AwsVpcPeeringMirror
-type AwsVpcPeeringMirrorSpec struct {
+// NfsVolumeSpec defines the desired state of NfsVolume
+type NfsVolumeSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of AwsVpcPeeringMirror. Edit awsvpcpeeringmirror_types.go to remove/update
+	// Foo is an example field of NfsVolume. Edit nfsvolume_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
 }
 
-// AwsVpcPeeringMirrorStatus defines the observed state of AwsVpcPeeringMirror
-type AwsVpcPeeringMirrorStatus struct {
+// NfsVolumeStatus defines the observed state of NfsVolume
+type NfsVolumeStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,24 +41,24 @@ type AwsVpcPeeringMirrorStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// AwsVpcPeeringMirror is the Schema for the awsvpcpeeringmirrors API
-type AwsVpcPeeringMirror struct {
+// NfsVolume is the Schema for the nfsvolumes API
+type NfsVolume struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AwsVpcPeeringMirrorSpec   `json:"spec,omitempty"`
-	Status AwsVpcPeeringMirrorStatus `json:"status,omitempty"`
+	Spec   NfsVolumeSpec   `json:"spec,omitempty"`
+	Status NfsVolumeStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// AwsVpcPeeringMirrorList contains a list of AwsVpcPeeringMirror
-type AwsVpcPeeringMirrorList struct {
+// NfsVolumeList contains a list of NfsVolume
+type NfsVolumeList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []AwsVpcPeeringMirror `json:"items"`
+	Items           []NfsVolume `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AwsVpcPeeringMirror{}, &AwsVpcPeeringMirrorList{})
+	SchemeBuilder.Register(&NfsVolume{}, &NfsVolumeList{})
 }

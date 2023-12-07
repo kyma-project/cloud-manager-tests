@@ -23,17 +23,17 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// AzureVpcPeeringMirrorSpec defines the desired state of AzureVpcPeeringMirror
-type AzureVpcPeeringMirrorSpec struct {
+// GcpVpcPeeringSpec defines the desired state of GcpVpcPeering
+type GcpVpcPeeringSpec struct {
 	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 
-	// Foo is an example field of AzureVpcPeeringMirror. Edit azurevpcpeeringmirror_types.go to remove/update
+	// Foo is an example field of GcpVpcPeering. Edit gcpvpcpeering_types.go to remove/update
 	Foo string `json:"foo,omitempty"`
 }
 
-// AzureVpcPeeringMirrorStatus defines the observed state of AzureVpcPeeringMirror
-type AzureVpcPeeringMirrorStatus struct {
+// GcpVpcPeeringStatus defines the observed state of GcpVpcPeering
+type GcpVpcPeeringStatus struct {
 	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
 	// Important: Run "make" to regenerate code after modifying this file
 }
@@ -41,24 +41,24 @@ type AzureVpcPeeringMirrorStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// AzureVpcPeeringMirror is the Schema for the azurevpcpeeringmirrors API
-type AzureVpcPeeringMirror struct {
+// GcpVpcPeering is the Schema for the gcpvpcpeerings API
+type GcpVpcPeering struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AzureVpcPeeringMirrorSpec   `json:"spec,omitempty"`
-	Status AzureVpcPeeringMirrorStatus `json:"status,omitempty"`
+	Spec   GcpVpcPeeringSpec   `json:"spec,omitempty"`
+	Status GcpVpcPeeringStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// AzureVpcPeeringMirrorList contains a list of AzureVpcPeeringMirror
-type AzureVpcPeeringMirrorList struct {
+// GcpVpcPeeringList contains a list of GcpVpcPeering
+type GcpVpcPeeringList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []AzureVpcPeeringMirror `json:"items"`
+	Items           []GcpVpcPeering `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AzureVpcPeeringMirror{}, &AzureVpcPeeringMirrorList{})
+	SchemeBuilder.Register(&GcpVpcPeering{}, &GcpVpcPeeringList{})
 }
