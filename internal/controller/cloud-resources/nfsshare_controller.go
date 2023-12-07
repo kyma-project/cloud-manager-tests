@@ -27,26 +27,26 @@ import (
 	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
 )
 
-// NfsVolumeReconciler reconciles a NfsVolume object
-type NfsVolumeReconciler struct {
+// NfsShareReconciler reconciles a NfsShare object
+type NfsShareReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsvolumes,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsvolumes/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsvolumes/finalizers,verbs=update
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsshares,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsshares/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsshares/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the NfsVolume object against the actual cluster state, and then
+// the NfsShare object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
-func (r *NfsVolumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *NfsShareReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
@@ -55,8 +55,8 @@ func (r *NfsVolumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *NfsVolumeReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *NfsShareReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&cloudresourcesv1beta1.NfsVolume{}).
+		For(&cloudresourcesv1beta1.NfsShare{}).
 		Complete(r)
 }

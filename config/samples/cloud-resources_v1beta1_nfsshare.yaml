@@ -1,12 +1,12 @@
 apiVersion: cloud-resources.kyma-project.io/v1beta1
-kind: GcpVpcPeering
+kind: NfsShare
 metadata:
   labels:
-    app.kubernetes.io/name: gcpvpcpeering
-    app.kubernetes.io/instance: gcpvpcpeering-sample
+    app.kubernetes.io/name: nfsshare
+    app.kubernetes.io/instance: nfsshare-sample
     app.kubernetes.io/part-of: cloud-resources-control-plane
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: cloud-resources-control-plane
-  name: gcpvpcpeering-sample
+  name: nfsshare-sample
 spec:
   # TODO(user): Add fields here

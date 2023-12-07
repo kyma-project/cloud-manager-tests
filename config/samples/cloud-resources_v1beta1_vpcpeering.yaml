@@ -1,12 +1,12 @@
 apiVersion: cloud-resources.kyma-project.io/v1beta1
-kind: AzureVpcPeering
+kind: VpcPeering
 metadata:
   labels:
-    app.kubernetes.io/name: azurevpcpeering
-    app.kubernetes.io/instance: azurevpcpeering-sample
+    app.kubernetes.io/name: vpcpeering
+    app.kubernetes.io/instance: vpcpeering-sample
     app.kubernetes.io/part-of: cloud-resources-control-plane
     app.kubernetes.io/managed-by: kustomize
     app.kubernetes.io/created-by: cloud-resources-control-plane
-  name: azurevpcpeering-sample
+  name: vpcpeering-sample
 spec:
   # TODO(user): Add fields here
