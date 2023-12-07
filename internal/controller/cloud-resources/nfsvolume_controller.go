@@ -27,26 +27,26 @@ import (
 	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
 )
 
-// GcpVpcPeeringMirrorReconciler reconciles a GcpVpcPeeringMirror object
-type GcpVpcPeeringMirrorReconciler struct {
+// NfsVolumeReconciler reconciles a NfsVolume object
+type NfsVolumeReconciler struct {
 	client.Client
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=gcpvpcpeeringmirrors,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=gcpvpcpeeringmirrors/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=gcpvpcpeeringmirrors/finalizers,verbs=update
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsvolumes,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsvolumes/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsvolumes/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the GcpVpcPeeringMirror object against the actual cluster state, and then
+// the NfsVolume object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
-func (r *GcpVpcPeeringMirrorReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *NfsVolumeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
 	// TODO(user): your logic here
@@ -55,8 +55,8 @@ func (r *GcpVpcPeeringMirrorReconciler) Reconcile(ctx context.Context, req ctrl.
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *GcpVpcPeeringMirrorReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *NfsVolumeReconciler) SetupWithManager(mgr ctrl.Manager) error {
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&cloudresourcesv1beta1.GcpVpcPeeringMirror{}).
+		For(&cloudresourcesv1beta1.NfsVolume{}).
 		Complete(r)
 }

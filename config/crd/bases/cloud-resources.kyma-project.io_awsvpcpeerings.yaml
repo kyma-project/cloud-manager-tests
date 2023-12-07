@@ -4,21 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: azurevpcpeeringmirrors.cloud-resources.kyma-project.io
+  name: awsvpcpeerings.cloud-resources.kyma-project.io
 spec:
   group: cloud-resources.kyma-project.io
   names:
-    kind: AzureVpcPeeringMirror
-    listKind: AzureVpcPeeringMirrorList
-    plural: azurevpcpeeringmirrors
-    singular: azurevpcpeeringmirror
+    kind: AwsVpcPeering
+    listKind: AwsVpcPeeringList
+    plural: awsvpcpeerings
+    singular: awsvpcpeering
   scope: Namespaced
   versions:
   - name: v1beta1
     schema:
       openAPIV3Schema:
-        description: AzureVpcPeeringMirror is the Schema for the azurevpcpeeringmirrors
-          API
+        description: AwsVpcPeering is the Schema for the awsvpcpeerings API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -33,16 +32,15 @@ spec:
           metadata:
             type: object
           spec:
-            description: AzureVpcPeeringMirrorSpec defines the desired state of AzureVpcPeeringMirror
+            description: AwsVpcPeeringSpec defines the desired state of AwsVpcPeering
             properties:
               foo:
-                description: Foo is an example field of AzureVpcPeeringMirror. Edit
-                  azurevpcpeeringmirror_types.go to remove/update
+                description: Foo is an example field of AwsVpcPeering. Edit awsvpcpeering_types.go
+                  to remove/update
                 type: string
             type: object
           status:
-            description: AzureVpcPeeringMirrorStatus defines the observed state of
-              AzureVpcPeeringMirror
+            description: AwsVpcPeeringStatus defines the observed state of AwsVpcPeering
             type: object
         type: object
     served: true

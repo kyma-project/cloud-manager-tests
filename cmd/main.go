@@ -89,32 +89,32 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&cloudresourcescontroller.GcpVpcPeeringMirrorReconciler{
+	if err = (&cloudresourcescontroller.GcpVpcPeeringReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "GcpVpcPeeringMirror")
+		setupLog.Error(err, "unable to create controller", "controller", "GcpVpcPeering")
 		os.Exit(1)
 	}
-	if err = (&cloudresourcescontroller.AzureVpcPeeringMirrorReconciler{
+	if err = (&cloudresourcescontroller.AzureVpcPeeringReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "AzureVpcPeeringMirror")
+		setupLog.Error(err, "unable to create controller", "controller", "AzureVpcPeering")
 		os.Exit(1)
 	}
-	if err = (&cloudresourcescontroller.AwsVpcPeeringMirrorReconciler{
+	if err = (&cloudresourcescontroller.AwsVpcPeeringReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "AwsVpcPeeringMirror")
+		setupLog.Error(err, "unable to create controller", "controller", "AwsVpcPeering")
 		os.Exit(1)
 	}
-	if err = (&cloudresourcescontroller.NfsVolumeMirrorReconciler{
+	if err = (&cloudresourcescontroller.NfsVolumeReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "NfsVolumeMirror")
+		setupLog.Error(err, "unable to create controller", "controller", "NfsVolume")
 		os.Exit(1)
 	}
 	//+kubebuilder:scaffold:builder
