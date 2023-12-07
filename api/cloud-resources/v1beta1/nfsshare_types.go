@@ -23,42 +23,47 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// AwsVpcPeeringSpec defines the desired state of AwsVpcPeering
-type AwsVpcPeeringSpec struct {
-	// INSERT ADDITIONAL SPEC FIELDS - desired state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
-
-	// Foo is an example field of AwsVpcPeering. Edit awsvpcpeering_types.go to remove/update
-	Foo string `json:"foo,omitempty"`
+// NfsShareSpec defines the desired state of NfsShare
+type NfsShareSpec struct {
+	Capacity string `json:"capacity"`
 }
 
-// AwsVpcPeeringStatus defines the observed state of AwsVpcPeering
-type AwsVpcPeeringStatus struct {
-	// INSERT ADDITIONAL STATUS FIELD - define observed state of cluster
-	// Important: Run "make" to regenerate code after modifying this file
+// NfsShareStatus defines the observed state of NfsShare
+type NfsShareStatus struct {
+	State    StatusState `json:"state,omitempty"`
+	Capacity string      `json:"capacity,omitempty"`
+
+	// +optional
+	Scope *Scope `json:"scope,omitempty"`
+
+	// List of status conditions to indicate the status of a Peering.
+	// +optional
+	// +listType=map
+	// +listMapKey=type
+	Conditions []metav1.Condition `json:"conditions,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// AwsVpcPeering is the Schema for the awsvpcpeerings API
-type AwsVpcPeering struct {
+// NfsShare is the Schema for the nfsshares API
+type NfsShare struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   AwsVpcPeeringSpec   `json:"spec,omitempty"`
-	Status AwsVpcPeeringStatus `json:"status,omitempty"`
+	Spec   NfsShareSpec   `json:"spec,omitempty"`
+	Status NfsShareStatus `json:"status,omitempty"`
 }
 
 //+kubebuilder:object:root=true
 
-// AwsVpcPeeringList contains a list of AwsVpcPeering
-type AwsVpcPeeringList struct {
+// NfsShareList contains a list of NfsShare
+type NfsShareList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []AwsVpcPeering `json:"items"`
+	Items           []NfsShare `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&AwsVpcPeering{}, &AwsVpcPeeringList{})
+	SchemeBuilder.Register(&NfsShare{}, &NfsShareList{})
 }

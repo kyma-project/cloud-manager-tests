@@ -1,7 +1,5 @@
 ## Append samples of your project ##
 resources:
-- cloud-resources_v1beta1_gcpvpcpeering.yaml
-- cloud-resources_v1beta1_azurevpcpeering.yaml
-- cloud-resources_v1beta1_awsvpcpeering.yaml
-- cloud-resources_v1beta1_nfsvolume.yaml
+- cloud-resources_v1beta1_nfsshare.yaml
+- cloud-resources_v1beta1_vpcpeering.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples

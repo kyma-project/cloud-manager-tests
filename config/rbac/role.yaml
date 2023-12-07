@@ -7,7 +7,7 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - awsvpcpeerings
+  - nfsshares
   verbs:
   - create
   - delete
@@ -19,13 +19,13 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - awsvpcpeerings/finalizers
+  - nfsshares/finalizers
   verbs:
   - update
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - awsvpcpeerings/status
+  - nfsshares/status
   verbs:
   - get
   - patch
@@ -33,7 +33,7 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - azurevpcpeerings
+  - vpcpeerings
   verbs:
   - create
   - delete
@@ -45,65 +45,13 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - azurevpcpeerings/finalizers
+  - vpcpeerings/finalizers
   verbs:
   - update
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - azurevpcpeerings/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - cloud-resources.kyma-project.io
-  resources:
-  - gcpvpcpeerings
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - cloud-resources.kyma-project.io
-  resources:
-  - gcpvpcpeerings/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - cloud-resources.kyma-project.io
-  resources:
-  - gcpvpcpeerings/status
-  verbs:
-  - get
-  - patch
-  - update
-- apiGroups:
-  - cloud-resources.kyma-project.io
-  resources:
-  - nfsvolumes
-  verbs:
-  - create
-  - delete
-  - get
-  - list
-  - patch
-  - update
-  - watch
-- apiGroups:
-  - cloud-resources.kyma-project.io
-  resources:
-  - nfsvolumes/finalizers
-  verbs:
-  - update
-- apiGroups:
-  - cloud-resources.kyma-project.io
-  resources:
-  - nfsvolumes/status
+  - vpcpeerings/status
   verbs:
   - get
   - patch

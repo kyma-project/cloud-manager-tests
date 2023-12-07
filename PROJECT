@@ -15,7 +15,7 @@ resources:
   controller: true
   domain: kyma-project.io
   group: cloud-resources
-  kind: GcpVpcPeering
+  kind: NfsShare
   path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
   version: v1beta1
 - api:
@@ -24,25 +24,7 @@ resources:
   controller: true
   domain: kyma-project.io
   group: cloud-resources
-  kind: AzureVpcPeering
-  path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
-  version: v1beta1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: kyma-project.io
-  group: cloud-resources
-  kind: AwsVpcPeering
-  path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
-  version: v1beta1
-- api:
-    crdVersion: v1
-    namespaced: true
-  controller: true
-  domain: kyma-project.io
-  group: cloud-resources
-  kind: NfsVolume
+  kind: VpcPeering
   path: github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1
   version: v1beta1
 version: "3"
