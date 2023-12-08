@@ -1,5 +1,5 @@
 package actions
 
-type KymaSpecifyingObject interface {
+type CommonObject interface {
 	Kyma() string
 }

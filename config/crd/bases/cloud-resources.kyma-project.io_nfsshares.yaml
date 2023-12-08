@@ -36,8 +36,14 @@ spec:
             properties:
               capacity:
                 type: string
+              kyma:
+                type: string
+              provider:
+                type: string
             required:
             - capacity
+            - kyma
+            - provider
             type: object
           status:
             description: NfsShareStatus defines the observed state of NfsShare

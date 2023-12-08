@@ -55,6 +55,10 @@ spec:
                   remoteVpc:
                     type: string
                 type: object
+              kyma:
+                type: string
+            required:
+            - kyma
             type: object
           status:
             description: VpcPeeringStatus defines the observed state of VpcPeering

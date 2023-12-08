@@ -25,6 +25,13 @@ import (
 
 // NfsShareSpec defines the desired state of NfsShare
 type NfsShareSpec struct {
+	// +kubebuilder:validation:Required
+	Kyma string `json:"kyma"`
+
+	// +kubebuilder:validation:Required
+	Provider string `json:"provider"`
+
+	// +kubebuilder:validation:Required
 	Capacity string `json:"capacity"`
 }
 
@@ -53,6 +60,10 @@ type NfsShare struct {
 
 	Spec   NfsShareSpec   `json:"spec,omitempty"`
 	Status NfsShareStatus `json:"status,omitempty"`
+}
+
+func (in *NfsShare) Kyma() string {
+	return in.Spec.Kyma
 }
 
 //+kubebuilder:object:root=true

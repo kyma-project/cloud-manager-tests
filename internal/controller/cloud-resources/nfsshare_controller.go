@@ -18,10 +18,15 @@ package cloudresources
 
 import (
 	"context"
-
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions"
+	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	apimachineryapi "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/apimachinery/pkg/runtime/schema"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
@@ -30,6 +35,7 @@ import (
 // NfsShareReconciler reconciles a NfsShare object
 type NfsShareReconciler struct {
 	client.Client
+	record.EventRecorder
 	Scheme *runtime.Scheme
 }
 
@@ -49,14 +55,32 @@ type NfsShareReconciler struct {
 func (r *NfsShareReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	// TODO: this should be moved into separate reconciler package
+	err := composedAction.ComposeActions(
+		"vpcPeering",
+		actions.LoadObj,
+		actions.LoadKyma,
+	)(ctx, actions.NewState(composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{})))
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, err
 }
 
 // SetupWithManager sets up the controller with the Manager.
 func (r *NfsShareReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	u := &apimachineryapi.Unstructured{}
+	u.SetGroupVersionKind(schema.GroupVersionKind{
+		Group:   "operator.kyma-project.io",
+		Version: "v1beta1",
+		Kind:    "Kyma",
+	})
 	return ctrl.NewControllerManagedBy(mgr).
 		For(&cloudresourcesv1beta1.NfsShare{}).
+		// Kyma CR should be watched on one place only so it gets into the cache
+		// we're using empty handler since we're not interested into starting
+		// reconciliation when Kyma CR changes, we just want them cached
+		Watches(
+			u,
+			handler.Funcs{},
+		).
 		Complete(r)
 }
