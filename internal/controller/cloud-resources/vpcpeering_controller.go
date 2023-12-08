@@ -18,6 +18,9 @@ package cloudresources
 
 import (
 	"context"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions"
+	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	"k8s.io/client-go/tools/record"
 
 	"k8s.io/apimachinery/pkg/runtime"
 	ctrl "sigs.k8s.io/controller-runtime"
@@ -30,6 +33,7 @@ import (
 // VpcPeeringReconciler reconciles a VpcPeering object
 type VpcPeeringReconciler struct {
 	client.Client
+	record.EventRecorder
 	Scheme *runtime.Scheme
 }
 
@@ -49,9 +53,14 @@ type VpcPeeringReconciler struct {
 func (r *VpcPeeringReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
-	// TODO(user): your logic here
+	// TODO: this should be moved into separate reconciler package
+	err := composedAction.ComposeActions(
+		"vpcPeering",
+		actions.LoadObj,
+		actions.LoadKyma,
+	)(ctx, actions.NewState(composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{})))
 
-	return ctrl.Result{}, nil
+	return ctrl.Result{}, err
 }
 
 // SetupWithManager sets up the controller with the Manager.

@@ -25,6 +25,9 @@ import (
 
 // VpcPeeringSpec defines the desired state of VpcPeering
 type VpcPeeringSpec struct {
+	// +kubebuilder:validation:Required
+	Kyma string `json:"kyma"`
+
 	// +optional
 	Gcp *GcpVpcPeering `json:"gcp,omitempty"`
 
@@ -74,6 +77,10 @@ type VpcPeering struct {
 
 	Spec   VpcPeeringSpec   `json:"spec,omitempty"`
 	Status VpcPeeringStatus `json:"status,omitempty"`
+}
+
+func (in *VpcPeering) Kyma() string {
+	return in.Spec.Kyma
 }
 
 //+kubebuilder:object:root=true
