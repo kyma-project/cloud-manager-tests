@@ -20,18 +20,26 @@ func ComposeActions(name string, actions ...Action) Action {
 	return func(ctx context.Context, state State) (err error) {
 		logger := log.FromContext(ctx).WithValues("action", name)
 		var actionName string
+		nextCtx := ctx
+		nch, ok := state.(NextCtxHanler)
+		if ok {
+			nch.NextCtxHanler(func(c context.Context) {
+				nextCtx = c
+			})
+			defer nch.NextCtxHanler(nil)
+		}
 	loop:
 		for _, a := range actions {
 			actionName = findActionName(a)
 			select {
-			case <-ctx.Done():
-				err = ctx.Err()
+			case <-nextCtx.Done():
+				err = nextCtx.Err()
 				break loop
 			default:
 				logger.
 					WithValues("targetAction", actionName).
 					Info("Running action")
-				err = a(ctx, state)
+				err = a(nextCtx, state)
 				if err != nil || state.IsStopped() {
 					break loop
 				}

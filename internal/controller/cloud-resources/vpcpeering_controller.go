@@ -18,6 +18,7 @@ package cloudresources
 
 import (
 	"context"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/abstractions"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions"
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 	"k8s.io/client-go/tools/record"
@@ -58,7 +59,14 @@ func (r *VpcPeeringReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		"vpcPeering",
 		actions.LoadObj,
 		actions.LoadKyma,
-	)(ctx, actions.NewState(composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{})))
+		actions.CreateGardenerClient,
+		actions.LoadShoot,
+		actions.LoadGardenerCredentials,
+		actions.DetectProvider,
+	)(ctx, actions.NewState(
+		composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{}),
+		abstractions.NewFileReader(),
+	))
 
 	return ctrl.Result{}, err
 }

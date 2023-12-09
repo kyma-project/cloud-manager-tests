@@ -18,6 +18,7 @@ package cloudresources
 
 import (
 	"context"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/abstractions"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions"
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 	apimachineryapi "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
@@ -60,7 +61,10 @@ func (r *NfsShareReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		"vpcPeering",
 		actions.LoadObj,
 		actions.LoadKyma,
-	)(ctx, actions.NewState(composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{})))
+	)(ctx, actions.NewState(
+		composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{}),
+		abstractions.NewFileReader(),
+	))
 
 	return ctrl.Result{}, err
 }

@@ -29,9 +29,6 @@ type NfsShareSpec struct {
 	Kyma string `json:"kyma"`
 
 	// +kubebuilder:validation:Required
-	Provider string `json:"provider"`
-
-	// +kubebuilder:validation:Required
 	Capacity string `json:"capacity"`
 }
 

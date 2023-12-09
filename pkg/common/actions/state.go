@@ -1,23 +1,33 @@
 package actions
 
 import (
-	gardenerapiv1beta1 "github.com/gardener/gardener/pkg/apis/core/v1beta1"
-	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
+	gardenerTypes "github.com/gardener/gardener/pkg/apis/core/v1beta1"
+	gardenerClient "github.com/gardener/gardener/pkg/client/core/clientset/versioned/typed/core/v1beta1"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/abstractions"
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	kubernetesClient "k8s.io/client-go/kubernetes"
 )
 
-func NewState(base composedAction.State) *State {
+func NewState(base composedAction.State, fileReader abstractions.FileReader) *State {
 	return &State{
-		State: base,
+		State:      base,
+		FileReader: fileReader,
 	}
 }
 
 type State struct {
 	composedAction.State
 
+	FileReader abstractions.FileReader
+
 	ShootName      string
-	Provider       cloudresourcesv1beta1.ProviderType
-	Shoot          *gardenerapiv1beta1.Shoot
+	ShootNamespace string
+
+	GardenerClient  gardenerClient.CoreV1beta1Interface
+	GardenK8sClient kubernetesClient.Interface
+
+	Provider       ProviderType
+	Shoot          *gardenerTypes.Shoot
 	CredentialData map[string]string
 }
 

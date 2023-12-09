@@ -16,7 +16,22 @@ func LoggerFromCtx(ctx context.Context) logr.Logger {
 	return log.FromContext(ctx)
 }
 
+func LoggerIntoCtx(ctx context.Context, logger logr.Logger, state State) context.Context {
+	newCtx := log.IntoContext(ctx, logger)
+
+	if state != nil {
+		state.NextCtx(ctx)
+	}
+
+	return newCtx
+}
+
+type NextCtxHanler interface {
+	NextCtxHanler(func(ctx context.Context))
+}
+
 type State interface {
+	NextCtx(ctx context.Context)
 	Client() client.Client
 	EventRecorder() record.EventRecorder
 	Name() types.NamespacedName
@@ -55,6 +70,17 @@ type baseState struct {
 	name          types.NamespacedName
 	obj           client.Object
 	stopped       bool
+	nextCtxHanler func(ctx context.Context)
+}
+
+func (s *baseState) NextCtxHanler(cb func(ctx context.Context)) {
+	s.nextCtxHanler = cb
+}
+
+func (s *baseState) NextCtx(ctx context.Context) {
+	if s.nextCtxHanler != nil {
+		s.nextCtxHanler(ctx)
+	}
 }
 
 func (s *baseState) StopWithRequeue() error {
