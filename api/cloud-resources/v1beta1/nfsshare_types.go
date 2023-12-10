@@ -63,6 +63,13 @@ func (in *NfsShare) Kyma() string {
 	return in.Spec.Kyma
 }
 
+func (in *NfsShare) Scope() *Scope {
+	return in.Status.Scope
+}
+func (in *NfsShare) SetScope(scope *Scope) {
+	in.Status.Scope = scope
+}
+
 //+kubebuilder:object:root=true
 
 // NfsShareList contains a list of NfsShare

@@ -1,4 +1,4 @@
-package actions
+package scope
 
 import (
 	"context"
@@ -7,7 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func LoadShoot(ctx context.Context, st composedAction.State) error {
+func loadShoot(ctx context.Context, st composedAction.State) error {
 	logger := composedAction.LoggerFromCtx(ctx)
 	state := st.(*State)
 

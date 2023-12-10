@@ -1,13 +1,14 @@
-package actions
+package scope
 
 import (
 	"context"
 	"fmt"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common"
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func LoadGardenerCredentials(ctx context.Context, st composedAction.State) error {
+func loadGardenerCredentials(ctx context.Context, st composedAction.State) error {
 	logger := composedAction.LoggerFromCtx(ctx)
 	state := st.(*State)
 
@@ -20,7 +21,7 @@ func LoadGardenerCredentials(ctx context.Context, st composedAction.State) error
 		return err
 	}
 
-	state.Provider = ProviderType(secretBinding.Provider.Type)
+	state.Provider = common.ProviderType(secretBinding.Provider.Type)
 
 	secret, err := state.GardenK8sClient.CoreV1().Secrets(secretBinding.SecretRef.Namespace).
 		Get(ctx, secretBinding.SecretRef.Name, metav1.GetOptions{})

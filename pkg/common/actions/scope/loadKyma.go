@@ -1,4 +1,4 @@
-package actions
+package scope
 
 import (
 	"context"
@@ -8,7 +8,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func LoadKyma(ctx context.Context, state composedAction.State) error {
+func loadKyma(ctx context.Context, state composedAction.State) error {
 	logger := composedAction.LoggerFromCtx(ctx)
 
 	u := &apimachineryapi.Unstructured{}

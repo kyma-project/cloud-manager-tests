@@ -25,6 +25,9 @@ type AzureScope struct {
 
 	// +kubebuilder:validation:Required
 	SubscriptionId string `json:"subscriptionId"`
+
+	// +kubebuilder:validation:Required
+	VpcNetwork string `json:"vpcNetwork"`
 }
 
 type AwsScope struct {

@@ -1,4 +1,4 @@
-package actions
+package scope
 
 import (
 	"context"
@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-func CreateGardenerClient(ctx context.Context, st composedAction.State) error {
+func createGardenerClient(ctx context.Context, st composedAction.State) error {
 	logger := composedAction.LoggerFromCtx(ctx)
 	state := st.(*State)
 	fn := os.Getenv("GARDENER_CREDENTIALS")
