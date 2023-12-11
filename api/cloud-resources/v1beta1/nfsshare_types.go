@@ -29,9 +29,6 @@ type NfsShareSpec struct {
 	Kyma string `json:"kyma"`
 
 	// +kubebuilder:validation:Required
-	Provider string `json:"provider"`
-
-	// +kubebuilder:validation:Required
 	Capacity string `json:"capacity"`
 }
 
@@ -64,6 +61,13 @@ type NfsShare struct {
 
 func (in *NfsShare) Kyma() string {
 	return in.Spec.Kyma
+}
+
+func (in *NfsShare) Scope() *Scope {
+	return in.Status.Scope
+}
+func (in *NfsShare) SetScope(scope *Scope) {
+	in.Status.Scope = scope
 }
 
 //+kubebuilder:object:root=true

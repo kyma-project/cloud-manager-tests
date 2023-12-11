@@ -1,14 +1,16 @@
-package actions
+package scope
 
 import (
 	"context"
-	composed "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 	apimachineryapi "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"k8s.io/apimachinery/pkg/runtime/schema"
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func LoadKyma(ctx context.Context, state composed.State) error {
+func loadKyma(ctx context.Context, state composedAction.State) (error, context.Context) {
+	logger := composedAction.LoggerFromCtx(ctx)
+
 	u := &apimachineryapi.Unstructured{}
 	u.SetGroupVersionKind(schema.GroupVersionKind{
 		Group:   "operator.kyma-project.io",
@@ -20,10 +22,14 @@ func LoadKyma(ctx context.Context, state composed.State) error {
 		Name:      state.(*State).Object().Kyma(),
 	}, u)
 	if err != nil {
-		return err
+		logger.Error(err, "error loading Kyma CR")
+		return err, nil
 	}
 
 	state.(*State).ShootName = u.GetLabels()["kyma-project.io/shoot-name"]
 
-	return nil
+	logger = logger.WithValues("shootName", state.(*State).ShootName)
+	logger.Info("Shoot name found")
+
+	return nil, composedAction.LoggerIntoCtx(ctx, logger)
 }

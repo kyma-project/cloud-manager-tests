@@ -19,6 +19,7 @@ package cloudresources
 import (
 	"context"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/focal"
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 	"k8s.io/client-go/tools/record"
 
@@ -54,11 +55,11 @@ func (r *VpcPeeringReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 	_ = log.FromContext(ctx)
 
 	// TODO: this should be moved into separate reconciler package
-	err := composedAction.ComposeActions(
-		"vpcPeering",
-		actions.LoadObj,
-		actions.LoadKyma,
-	)(ctx, actions.NewState(composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{})))
+	state := focal.NewState(
+		composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{}),
+	)
+	action := actions.New()
+	err, _ := action(ctx, state)
 
 	return ctrl.Result{}, err
 }

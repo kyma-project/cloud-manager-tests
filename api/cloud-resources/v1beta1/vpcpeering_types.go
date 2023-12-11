@@ -83,6 +83,14 @@ func (in *VpcPeering) Kyma() string {
 	return in.Spec.Kyma
 }
 
+func (in *VpcPeering) Scope() *Scope {
+	return in.Status.Scope
+}
+
+func (in *VpcPeering) SetScope(scope *Scope) {
+	in.Status.Scope = scope
+}
+
 //+kubebuilder:object:root=true
 
 // VpcPeeringList contains a list of VpcPeering

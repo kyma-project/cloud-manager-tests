@@ -12,28 +12,34 @@ func findActionName(a Action) string {
 	return fullName
 }
 
-type Action = func(ctx context.Context, state State) error
+type Action = func(ctx context.Context, state State) (error, context.Context)
 
 // ===========================
 
 func ComposeActions(name string, actions ...Action) Action {
-	return func(ctx context.Context, state State) (err error) {
+	return func(ctx context.Context, state State) (error, context.Context) {
 		logger := log.FromContext(ctx).WithValues("action", name)
 		var actionName string
+		var lastError error
+		currentCtx := ctx
 	loop:
 		for _, a := range actions {
 			actionName = findActionName(a)
 			select {
-			case <-ctx.Done():
-				err = ctx.Err()
+			case <-currentCtx.Done():
+				lastError = currentCtx.Err()
 				break loop
 			default:
 				logger.
 					WithValues("targetAction", actionName).
 					Info("Running action")
-				err = a(ctx, state)
+				err, nextCtx := a(currentCtx, state)
+				lastError = err
 				if err != nil || state.IsStopped() {
 					break loop
+				}
+				if nextCtx != nil {
+					currentCtx = nextCtx
 				}
 			}
 		}
@@ -43,12 +49,12 @@ func ComposeActions(name string, actions ...Action) Action {
 				"lastAction", actionName,
 				"result", state.Result(),
 			)
-		if err == nil {
+		if lastError == nil {
 			l.Info("Reconciliation finished")
 		} else {
-			l.Error(err, "reconciliation finished")
+			l.Error(lastError, "reconciliation finished")
 		}
 
-		return err
+		return lastError, currentCtx
 	}
 }

@@ -35,7 +35,7 @@ func Any(predicates ...Predicate) Predicate {
 }
 
 func BuildBranchingAction(name string, predicate Predicate, trueAction Action, falseAction Action) Action {
-	return func(ctx context.Context, state State) error {
+	return func(ctx context.Context, state State) (error, context.Context) {
 		value := predicate(ctx, state)
 		logger := LoggerFromCtx(ctx).
 			WithValues(
@@ -60,13 +60,13 @@ func BuildBranchingAction(name string, predicate Predicate, trueAction Action, f
 			WithValues("targetAction", nil).
 			Info("No action called since not supplied")
 
-		return nil
+		return nil, nil
 	}
 }
 
 type Case interface {
 	Predicate(ctx context.Context, state State) bool
-	Action(ctx context.Context, state State) error
+	Action(ctx context.Context, state State) (error, context.Context)
 }
 
 func NewCase(p Predicate, a Action) Case {
@@ -85,12 +85,12 @@ func (cs *CaseStruct) Predicate(ctx context.Context, state State) bool {
 	return cs.P(ctx, state)
 }
 
-func (cs *CaseStruct) Action(ctx context.Context, state State) error {
+func (cs *CaseStruct) Action(ctx context.Context, state State) (error, context.Context) {
 	return cs.A(ctx, state)
 }
 
 func BuildSwitchAction(name string, defaultAction Action, cases ...Case) Action {
-	return func(ctx context.Context, state State) error {
+	return func(ctx context.Context, state State) (error, context.Context) {
 		logger := LoggerFromCtx(ctx).WithValues("action", name)
 		for i, cs := range cases {
 			value := cs.Predicate(ctx, state)
@@ -119,6 +119,6 @@ func BuildSwitchAction(name string, defaultAction Action, cases ...Case) Action 
 			logger.Info("None of case predicates evaluated true, and default action is not provided")
 		}
 
-		return nil
+		return nil, nil
 	}
 }
