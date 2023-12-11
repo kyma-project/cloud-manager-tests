@@ -59,7 +59,7 @@ func (r *VpcPeeringReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 		composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{}),
 	)
 	action := actions.New()
-	err := action(ctx, state)
+	err, _ := action(ctx, state)
 
 	return ctrl.Result{}, err
 }

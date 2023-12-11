@@ -9,13 +9,13 @@ import (
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 )
 
-func defineScopeGcp(ctx context.Context, state *State) error {
+func defineScopeGcp(ctx context.Context, state *State) (error, context.Context) {
 	logger := composedAction.LoggerFromCtx(ctx)
 	js, ok := state.CredentialData["serviceaccount.json"]
 	if !ok {
 		err := errors.New("gardener credential for gcp missing serviceaccount.json key")
 		logger.Error(err, "error defining GCP scope")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	var data map[string]string
@@ -23,14 +23,14 @@ func defineScopeGcp(ctx context.Context, state *State) error {
 	if err != nil {
 		err := fmt.Errorf("error decoding serviceaccount.json: %w", err)
 		logger.Error(err, "error defining GCP scope")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	project, ok := data["project_id"]
 	if !ok {
 		err := errors.New("gardener gcp credentials missing project_id")
 		logger.Error(err, "error defining GCP scope")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	scope := &cloudresourcesv1beta1.Scope{
@@ -46,8 +46,8 @@ func defineScopeGcp(ctx context.Context, state *State) error {
 	if err != nil {
 		err = fmt.Errorf("error saving object status with scope: %w", err)
 		logger.Error(err, "error saving GCP scope")
-		return state.Stop(err) // will requeue
+		return state.Stop(err), nil // will requeue
 	}
 
-	return nil
+	return nil, nil
 }

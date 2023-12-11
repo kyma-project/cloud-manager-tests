@@ -16,22 +16,13 @@ func LoggerFromCtx(ctx context.Context) logr.Logger {
 	return log.FromContext(ctx)
 }
 
-func LoggerIntoCtx(ctx context.Context, logger logr.Logger, state State) context.Context {
+func LoggerIntoCtx(ctx context.Context, logger logr.Logger) context.Context {
 	newCtx := log.IntoContext(ctx, logger)
-
-	if state != nil {
-		state.NextCtx(ctx)
-	}
 
 	return newCtx
 }
 
-type NextCtxHanler interface {
-	NextCtxHanler(func(ctx context.Context))
-}
-
 type State interface {
-	NextCtx(ctx context.Context)
 	Client() client.Client
 	EventRecorder() record.EventRecorder
 	Name() types.NamespacedName

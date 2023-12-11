@@ -8,7 +8,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func loadGardenerCredentials(ctx context.Context, st composedAction.State) error {
+func loadGardenerCredentials(ctx context.Context, st composedAction.State) (error, context.Context) {
 	logger := composedAction.LoggerFromCtx(ctx)
 	state := st.(*State)
 
@@ -18,7 +18,7 @@ func loadGardenerCredentials(ctx context.Context, st composedAction.State) error
 	if err != nil {
 		err = fmt.Errorf("error getting shoot secret binding %s: %w", bindingName, err)
 		logger.Error(err, "Error")
-		return err
+		return err, nil
 	}
 
 	state.Provider = common.ProviderType(secretBinding.Provider.Type)
@@ -28,7 +28,7 @@ func loadGardenerCredentials(ctx context.Context, st composedAction.State) error
 	if err != nil {
 		err = fmt.Errorf("error getting shoot related secret: %w", err)
 		logger.Error(err, "Error")
-		return err
+		return err, nil
 	}
 
 	state.CredentialData = map[string]string{}
@@ -38,5 +38,5 @@ func loadGardenerCredentials(ctx context.Context, st composedAction.State) error
 
 	logger.Info("Garden credential loaded")
 
-	return nil
+	return nil, nil
 }

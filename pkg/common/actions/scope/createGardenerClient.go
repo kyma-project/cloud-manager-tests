@@ -12,7 +12,7 @@ import (
 	"os"
 )
 
-func createGardenerClient(ctx context.Context, st composedAction.State) error {
+func createGardenerClient(ctx context.Context, st composedAction.State) (error, context.Context) {
 	logger := composedAction.LoggerFromCtx(ctx)
 	state := st.(*State)
 	fn := os.Getenv("GARDENER_CREDENTIALS")
@@ -21,22 +21,22 @@ func createGardenerClient(ctx context.Context, st composedAction.State) error {
 	}
 
 	logger = logger.WithValues("credentialsPath", fn)
-	logger.Info("loading gardener credentials")
+	logger.Info("Loading gardener credentials")
 	kubeBytes, err := state.FileReader.ReadFile(fn)
 	if err != nil {
 		err = fmt.Errorf("error loading gardener credentials: %w", err)
 		logger.Error(err, "error creating gardener client")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	config, err := clientcmd.NewClientConfigFromBytes(kubeBytes)
 	if err != nil {
-		return fmt.Errorf("error creating gardener client config: %w", err)
+		return fmt.Errorf("error creating gardener client config: %w", err), nil
 	}
 
 	rawConfig, err := config.RawConfig()
 	if err != nil {
-		return fmt.Errorf("error getting gardener raw client config: %w", err)
+		return fmt.Errorf("error getting gardener raw client config: %w", err), nil
 	}
 	var configContext *clientcmdapi.Context
 	if len(rawConfig.CurrentContext) > 0 {
@@ -54,20 +54,20 @@ func createGardenerClient(ctx context.Context, st composedAction.State) error {
 	}
 
 	logger = logger.WithValues("shootProject", state.ShootNamespace)
-	logger.Info("detected shoot namespace")
+	logger.Info("Detected shoot namespace")
 
 	restConfig, err := clientcmd.RESTConfigFromKubeConfig(kubeBytes)
 	if err != nil {
 		err = fmt.Errorf("error creating gardener rest config: %w", err)
 		logger.Error(err, "error creating gardener client")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	gClient, err := gardenerClient.NewForConfig(restConfig)
 	if err != nil {
 		err = fmt.Errorf("error creating gardener client: %w", err)
 		logger.Error(err, "error creating gardener client")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	state.GardenerClient = gClient
@@ -76,13 +76,12 @@ func createGardenerClient(ctx context.Context, st composedAction.State) error {
 	if err != nil {
 		err = fmt.Errorf("error creating gardene k8s client: %w", err)
 		logger.Error(err, "error creating gardene k8s client")
-		return state.Stop(nil) // no requeue
+		return state.Stop(nil), nil // no requeue
 	}
 
 	state.GardenK8sClient = k8sClient
 
 	logger.Info("Gardener clients created")
-	composedAction.LoggerIntoCtx(ctx, logger, state)
 
-	return nil
+	return nil, composedAction.LoggerIntoCtx(ctx, logger)
 }

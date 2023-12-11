@@ -7,7 +7,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func loadShoot(ctx context.Context, st composedAction.State) error {
+func loadShoot(ctx context.Context, st composedAction.State) (error, context.Context) {
 	logger := composedAction.LoggerFromCtx(ctx)
 	state := st.(*State)
 
@@ -15,12 +15,12 @@ func loadShoot(ctx context.Context, st composedAction.State) error {
 	if err != nil {
 		err = fmt.Errorf("error getting shoot: %w", err)
 		logger.Error(err, "Error loading shoot")
-		return err
+		return err, nil
 	}
 
 	state.Shoot = shoot
 
 	logger.Info("Shoot loaded")
 
-	return nil
+	return nil, nil
 }

@@ -8,7 +8,7 @@ import (
 	"k8s.io/apimachinery/pkg/types"
 )
 
-func loadKyma(ctx context.Context, state composedAction.State) error {
+func loadKyma(ctx context.Context, state composedAction.State) (error, context.Context) {
 	logger := composedAction.LoggerFromCtx(ctx)
 
 	u := &apimachineryapi.Unstructured{}
@@ -23,14 +23,13 @@ func loadKyma(ctx context.Context, state composedAction.State) error {
 	}, u)
 	if err != nil {
 		logger.Error(err, "error loading Kyma CR")
-		return err
+		return err, nil
 	}
 
 	state.(*State).ShootName = u.GetLabels()["kyma-project.io/shoot-name"]
 
 	logger = logger.WithValues("shootName", state.(*State).ShootName)
-	logger.Info("shoot name found")
-	composedAction.LoggerIntoCtx(ctx, logger, state)
+	logger.Info("Shoot name found")
 
-	return nil
+	return nil, composedAction.LoggerIntoCtx(ctx, logger)
 }

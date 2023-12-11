@@ -1,24 +1,26 @@
-package focal
+package scope
 
 import (
 	"context"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/abstractions"
-	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/scope"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/focal"
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 )
 
 func WhenNoScope(fileReader abstractions.FileReader) composedAction.Action {
-	return func(ctx context.Context, st composedAction.State) error {
-		state := st.(*State)
+	return func(ctx context.Context, st composedAction.State) (error, context.Context) {
+		state := st.(*focal.State)
 		if state.Object().Scope() != nil {
-			return nil // continue
+			logger := composedAction.LoggerFromCtx(ctx)
+			logger.Info("Object has scope")
+			return nil, nil // continue
 		}
 
 		logger := composedAction.LoggerFromCtx(ctx)
 		logger.Info("Object has no scope, running define scope branch")
 
-		scopeState := scope.NewState(state, fileReader)
-		action := scope.New()
+		scopeState := NewState(state, fileReader)
+		action := New()
 		return action(ctx, scopeState)
 	}
 }

@@ -61,7 +61,7 @@ func (r *NfsShareReconciler) Reconcile(ctx context.Context, req ctrl.Request) (c
 		composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.NfsShare{}),
 	)
 	action := actions.New()
-	err := action(ctx, state)
+	err, _ := action(ctx, state)
 
 	return ctrl.Result{}, err
 }

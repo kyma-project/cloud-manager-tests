@@ -7,7 +7,7 @@ import (
 	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 )
 
-func defineScope(ctx context.Context, st composedAction.State) error {
+func defineScope(ctx context.Context, st composedAction.State) (error, context.Context) {
 	state := st.(*State)
 
 	switch state.Provider {
@@ -22,5 +22,5 @@ func defineScope(ctx context.Context, st composedAction.State) error {
 	err := fmt.Errorf("unable to handle unknown provider '%s'", state.Provider)
 	logger := composedAction.LoggerFromCtx(ctx)
 	logger.Error(err, "Error defining scope")
-	return state.Stop(nil) // no requeue
+	return state.Stop(nil), nil // no requeue
 }
