@@ -34,22 +34,31 @@ spec:
           spec:
             description: NfsShareSpec defines the desired state of NfsShare
             properties:
-              capacity:
-                type: string
+              aws:
+                properties:
+                  throughput:
+                    enum:
+                    - Enhanced
+                    - Bursting
+                    type: string
+                  type:
+                    enum:
+                    - Regional
+                    - Zonal
+                    type: string
+                type: object
+              azure:
+                type: object
+              gcp:
+                type: object
               kyma:
                 type: string
-              provider:
-                type: string
             required:
-            - capacity
             - kyma
-            - provider
             type: object
           status:
             description: NfsShareStatus defines the observed state of NfsShare
             properties:
-              capacity:
-                type: string
               conditions:
                 description: List of status conditions to indicate the status of a
                   Peering.
@@ -138,9 +147,12 @@ spec:
                         type: string
                       tenantId:
                         type: string
+                      vpcNetwork:
+                        type: string
                     required:
                     - subscriptionId
                     - tenantId
+                    - vpcNetwork
                     type: object
                   gcp:
                     properties:

@@ -25,7 +25,7 @@ func defineScopeAzure(ctx context.Context, state *State) (error, context.Context
 		return state.Stop(nil), nil // no requeue
 	}
 
-	scope := &cloudresourcesv1beta1.Scope{
+	scope := &cloudresourcesv1beta1.ScopeX{
 		Azure: &cloudresourcesv1beta1.AzureScope{
 			TenantId:       tenantID,
 			SubscriptionId: subscriptionID,

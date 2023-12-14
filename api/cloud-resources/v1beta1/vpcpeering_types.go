@@ -58,7 +58,7 @@ type VpcPeeringStatus struct {
 	State StatusState `json:"state,omitempty"`
 
 	// +optional
-	Scope *Scope `json:"scope,omitempty"`
+	Scope *ScopeX `json:"scope,omitempty"`
 
 	// List of status conditions to indicate the status of a Peering.
 	// +optional
@@ -83,11 +83,11 @@ func (in *VpcPeering) Kyma() string {
 	return in.Spec.Kyma
 }
 
-func (in *VpcPeering) Scope() *Scope {
+func (in *VpcPeering) Scope() *ScopeX {
 	return in.Status.Scope
 }
 
-func (in *VpcPeering) SetScope(scope *Scope) {
+func (in *VpcPeering) SetScope(scope *ScopeX) {
 	in.Status.Scope = scope
 }
 

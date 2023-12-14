@@ -33,7 +33,7 @@ func defineScopeGcp(ctx context.Context, state *State) (error, context.Context) 
 		return state.Stop(nil), nil // no requeue
 	}
 
-	scope := &cloudresourcesv1beta1.Scope{
+	scope := &cloudresourcesv1beta1.ScopeX{
 		Gcp: &cloudresourcesv1beta1.GcpScope{
 			Project:    project,
 			VpcNetwork: fmt.Sprintf("shoot--%s--%s", state.ShootNamespace, state.ShootName),

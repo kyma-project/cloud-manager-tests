@@ -18,18 +18,18 @@ func (me *PredicateSuite) TestRunsTrueAction() {
 		func(ctx context.Context, state State) bool {
 			return true
 		},
-		func(ctx context.Context, state State) error {
+		func(ctx context.Context, state State) (error, context.Context) {
 			isTrueActionCalled = true
-			return nil
+			return nil, nil
 		},
-		func(ctx context.Context, state State) error {
+		func(ctx context.Context, state State) (error, context.Context) {
 			assert.Fail(me.T(), "falseAction should not be called")
-			return nil
+			return nil, nil
 		},
 	)
 	state := newComposedActionTestState()
 
-	_ = a(context.Background(), state)
+	_, _ = a(context.Background(), state)
 
 	assert.True(me.T(), isTrueActionCalled)
 }
@@ -41,18 +41,18 @@ func (me *PredicateSuite) TestRunsFalseAction() {
 		func(ctx context.Context, state State) bool {
 			return false
 		},
-		func(ctx context.Context, state State) error {
+		func(ctx context.Context, state State) (error, context.Context) {
 			assert.Fail(me.T(), "trueAction should not be called")
-			return nil
+			return nil, nil
 		},
-		func(ctx context.Context, state State) error {
+		func(ctx context.Context, state State) (error, context.Context) {
 			isFalseActionCalled = true
-			return nil
+			return nil, nil
 		},
 	)
 	state := newComposedActionTestState()
 
-	_ = a(context.Background(), state)
+	_, _ = a(context.Background(), state)
 
 	assert.True(me.T(), isFalseActionCalled)
 }

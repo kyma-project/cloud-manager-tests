@@ -25,10 +25,10 @@ type composedActionTestState struct {
 }
 
 func buildTestAction(logName string, err error) Action {
-	return func(ctx context.Context, state State) error {
+	return func(ctx context.Context, state State) (error, context.Context) {
 		st := state.(*composedActionTestState)
 		st.log = append(st.log, logName)
-		return err
+		return err, nil
 	}
 }
 
@@ -52,7 +52,7 @@ func (me *composedActionSuite) TestAllActionsAreRunInSequence() {
 		buildTestAction("3", nil),
 	)
 
-	_ = a(me.ctx, state)
+	_, _ = a(me.ctx, state)
 	assert.Equal(me.T(), []string{"1", "2", "3"}, state.log)
 }
 
@@ -67,13 +67,13 @@ func (me *composedActionSuite) TestBreaksOnFirstError() {
 		buildTestAction("3", nil),
 	)
 
-	err := a(me.ctx, state)
+	err, _ := a(me.ctx, state)
 	assert.Equal(me.T(), []string{"1", "2"}, state.log)
 	assert.Equal(me.T(), e1, err)
 }
 
 func buildDelayedTestAction(logName string, delay time.Duration, err error) Action {
-	return func(ctx context.Context, state State) error {
+	return func(ctx context.Context, state State) (error, context.Context) {
 		st := state.(*composedActionTestState)
 		st.log = append(st.log, logName+".start")
 		select {
@@ -82,7 +82,7 @@ func buildDelayedTestAction(logName string, delay time.Duration, err error) Acti
 		case <-time.After(delay):
 			st.log = append(st.log, logName+".end")
 		}
-		return err
+		return err, nil
 	}
 }
 
@@ -99,7 +99,7 @@ func (me *composedActionSuite) TestCanBeInterrupted() {
 
 	hasReturned := false
 	go func() {
-		_ = a(ctx, state)
+		_, _ = a(ctx, state)
 		hasReturned = true
 	}()
 
@@ -143,7 +143,7 @@ func (me *composedActionSuite) TestLogsAllRunActions() {
 		buildTestAction("3", nil),
 	)
 
-	_ = a(ctx, state)
+	_, _ = a(ctx, state)
 
 	assert.Len(me.T(), allLogs, 4)
 

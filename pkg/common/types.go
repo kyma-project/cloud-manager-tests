@@ -15,6 +15,6 @@ const (
 type CommonObject interface {
 	Kyma() string
 
-	Scope() *cloudresourcesv1beta1.Scope
-	SetScope(scope *cloudresourcesv1beta1.Scope)
+	Scope() *cloudresourcesv1beta1.ScopeX
+	SetScope(scope *cloudresourcesv1beta1.ScopeX)
 }

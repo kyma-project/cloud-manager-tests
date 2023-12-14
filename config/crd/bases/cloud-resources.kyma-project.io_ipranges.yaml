@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: vpcpeerings.cloud-resources.kyma-project.io
+  name: ipranges.cloud-resources.kyma-project.io
 spec:
   group: cloud-resources.kyma-project.io
   names:
-    kind: VpcPeering
-    listKind: VpcPeeringList
-    plural: vpcpeerings
-    singular: vpcpeering
+    kind: IpRange
+    listKind: IpRangeList
+    plural: ipranges
+    singular: iprange
   scope: Namespaced
   versions:
   - name: v1beta1
     schema:
       openAPIV3Schema:
-        description: VpcPeering is the Schema for the vpcpeerings API
+        description: IpRange is the Schema for the ipranges API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -32,36 +32,18 @@ spec:
           metadata:
             type: object
           spec:
-            description: VpcPeeringSpec defines the desired state of VpcPeering
+            description: IpRangeSpec defines the desired state of IpRange
             properties:
-              aws:
-                properties:
-                  foo:
-                    type: string
-                type: object
-              azure:
-                properties:
-                  allowVnetAccess:
-                    type: boolean
-                  remoteResourceGroup:
-                    type: string
-                  remoteVnet:
-                    type: string
-                type: object
-              gcp:
-                properties:
-                  remoteProject:
-                    type: string
-                  remoteVpc:
-                    type: string
-                type: object
+              cidr:
+                type: string
               kyma:
                 type: string
             required:
+            - cidr
             - kyma
             type: object
           status:
-            description: VpcPeeringStatus defines the observed state of VpcPeering
+            description: IpRangeStatus defines the observed state of IpRange
             properties:
               conditions:
                 description: List of status conditions to indicate the status of a

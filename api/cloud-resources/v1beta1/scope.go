@@ -1,6 +1,6 @@
 package v1beta1
 
-type Scope struct {
+type ScopeX struct {
 	// +optional
 	Gcp *GcpScope `json:"gcp,omitempty"`
 

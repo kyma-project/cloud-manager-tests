@@ -2,4 +2,5 @@
 resources:
 - cloud-resources_v1beta1_nfsshare.yaml
 - cloud-resources_v1beta1_vpcpeering.yaml
+- cloud-resources_v1beta1_iprange.yaml
 #+kubebuilder:scaffold:manifestskustomizesamples
