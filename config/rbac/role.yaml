@@ -7,7 +7,7 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares
+  - ipranges
   verbs:
   - create
   - delete
@@ -19,13 +19,39 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares/finalizers
+  - ipranges/finalizers
   verbs:
   - update
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares/status
+  - ipranges/status
+  verbs:
+  - get
+  - patch
+  - update
+- apiGroups:
+  - cloud-resources.kyma-project.io
+  resources:
+  - nfsinstances
+  verbs:
+  - create
+  - delete
+  - get
+  - list
+  - patch
+  - update
+  - watch
+- apiGroups:
+  - cloud-resources.kyma-project.io
+  resources:
+  - nfsinstances/finalizers
+  verbs:
+  - update
+- apiGroups:
+  - cloud-resources.kyma-project.io
+  resources:
+  - nfsinstances/status
   verbs:
   - get
   - patch

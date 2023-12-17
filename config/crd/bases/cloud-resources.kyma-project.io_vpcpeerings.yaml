@@ -57,8 +57,16 @@ spec:
                 type: object
               kyma:
                 type: string
+              scope:
+                properties:
+                  name:
+                    type: string
+                required:
+                - name
+                type: object
             required:
             - kyma
+            - scope
             type: object
           status:
             description: VpcPeeringStatus defines the observed state of VpcPeering
@@ -136,36 +144,6 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
-              scope:
-                properties:
-                  aws:
-                    properties:
-                      foo:
-                        type: string
-                    required:
-                    - foo
-                    type: object
-                  azure:
-                    properties:
-                      subscriptionId:
-                        type: string
-                      tenantId:
-                        type: string
-                    required:
-                    - subscriptionId
-                    - tenantId
-                    type: object
-                  gcp:
-                    properties:
-                      project:
-                        type: string
-                      vpcNetwork:
-                        type: string
-                    required:
-                    - project
-                    - vpcNetwork
-                    type: object
-                type: object
               state:
                 type: string
             type: object

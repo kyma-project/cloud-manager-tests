@@ -1,20 +1,20 @@
-# permissions for end users to edit nfsshares.
+# permissions for end users to edit nfsinstances.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/instance: nfsshare-editor-role
+    app.kubernetes.io/instance: nfsinstance-editor-role
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: cloud-resources-control-plane
     app.kubernetes.io/part-of: cloud-resources-control-plane
     app.kubernetes.io/managed-by: kustomize
-  name: nfsshare-editor-role
+  name: nfsinstance-editor-role
 rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares
+  - nfsinstances
   verbs:
   - create
   - delete
@@ -26,6 +26,6 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares/status
+  - nfsinstances/status
   verbs:
   - get

@@ -4,7 +4,7 @@ import (
 	"context"
 )
 
-type Predicate = func(ctx context.Context, state State) bool
+type Predicate func(ctx context.Context, state State) bool
 
 func Not(p Predicate) Predicate {
 	return func(ctx context.Context, state State) bool {

@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: nfsinstances.cloud-resources.kyma-project.io
+  name: ipranges.cloud-resources.kyma-project.io
 spec:
   group: cloud-resources.kyma-project.io
   names:
-    kind: NfsInstance
-    listKind: NfsInstanceList
-    plural: nfsinstances
-    singular: nfsinstance
+    kind: IpRange
+    listKind: IpRangeList
+    plural: ipranges
+    singular: iprange
   scope: Namespaced
   versions:
   - name: v1beta1
     schema:
       openAPIV3Schema:
-        description: NfsInstance is the Schema for the nfsinstances API
+        description: IpRange is the Schema for the ipranges API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -32,25 +32,12 @@ spec:
           metadata:
             type: object
           spec:
-            description: NfsInstanceSpec defines the desired state of NfsInstance
+            description: IpRangeSpec defines the desired state of IpRange
             properties:
-              aws:
-                properties:
-                  throughput:
-                    enum:
-                    - Enhanced
-                    - Bursting
-                    type: string
-                  type:
-                    enum:
-                    - Regional
-                    - Zonal
-                    type: string
-                type: object
-              azure:
-                type: object
-              gcp:
-                type: object
+              cidr:
+                type: string
+              kyma:
+                type: string
               scope:
                 properties:
                   name:
@@ -59,10 +46,12 @@ spec:
                 - name
                 type: object
             required:
+            - cidr
+            - kyma
             - scope
             type: object
           status:
-            description: NfsInstanceStatus defines the observed state of NfsInstance
+            description: IpRangeStatus defines the observed state of IpRange
             properties:
               conditions:
                 description: List of status conditions to indicate the status of a

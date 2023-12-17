@@ -1,20 +1,20 @@
-# permissions for end users to view nfsinstances.
+# permissions for end users to view ipranges.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/instance: nfsinstance-viewer-role
+    app.kubernetes.io/instance: iprange-viewer-role
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: cloud-resources-control-plane
     app.kubernetes.io/part-of: cloud-resources-control-plane
     app.kubernetes.io/managed-by: kustomize
-  name: nfsinstance-viewer-role
+  name: iprange-viewer-role
 rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsinstances
+  - ipranges
   verbs:
   - get
   - list
@@ -22,6 +22,6 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsinstances/status
+  - ipranges/status
   verbs:
   - get

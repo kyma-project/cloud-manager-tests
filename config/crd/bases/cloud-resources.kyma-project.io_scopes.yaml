@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: nfsinstances.cloud-resources.kyma-project.io
+  name: scopes.cloud-resources.kyma-project.io
 spec:
   group: cloud-resources.kyma-project.io
   names:
-    kind: NfsInstance
-    listKind: NfsInstanceList
-    plural: nfsinstances
-    singular: nfsinstance
+    kind: Scope
+    listKind: ScopeList
+    plural: scopes
+    singular: scope
   scope: Namespaced
   versions:
   - name: v1beta1
     schema:
       openAPIV3Schema:
-        description: NfsInstance is the Schema for the nfsinstances API
+        description: Scope is the Schema for the scopes API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -32,37 +32,54 @@ spec:
           metadata:
             type: object
           spec:
-            description: NfsInstanceSpec defines the desired state of NfsInstance
+            description: ScopeSpec defines the desired state of Scope
             properties:
-              aws:
-                properties:
-                  throughput:
-                    enum:
-                    - Enhanced
-                    - Bursting
-                    type: string
-                  type:
-                    enum:
-                    - Regional
-                    - Zonal
-                    type: string
-                type: object
-              azure:
-                type: object
-              gcp:
-                type: object
+              kyma:
+                type: string
               scope:
+                maxProperties: 1
+                minProperties: 1
                 properties:
-                  name:
-                    type: string
-                required:
-                - name
+                  aws:
+                    properties:
+                      foo:
+                        type: string
+                    required:
+                    - foo
+                    type: object
+                  azure:
+                    properties:
+                      subscriptionId:
+                        type: string
+                      tenantId:
+                        type: string
+                      vpcNetwork:
+                        type: string
+                    required:
+                    - subscriptionId
+                    - tenantId
+                    - vpcNetwork
+                    type: object
+                  gcp:
+                    properties:
+                      project:
+                        type: string
+                      vpcNetwork:
+                        type: string
+                    required:
+                    - project
+                    - vpcNetwork
+                    type: object
                 type: object
+              shootName:
+                type: string
             required:
+            - kyma
             - scope
+            - shootName
             type: object
           status:
-            description: NfsInstanceStatus defines the observed state of NfsInstance
+            description: ScopeStatus defines the observed state of Scope
             properties:
               conditions:
                 description: List of status conditions to indicate the status of a

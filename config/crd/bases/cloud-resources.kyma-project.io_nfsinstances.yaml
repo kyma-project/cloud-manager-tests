@@ -51,6 +51,8 @@ spec:
                 type: object
               gcp:
                 type: object
+              kyma:
+                type: string
               scope:
                 properties:
                   name:
@@ -59,6 +61,7 @@ spec:
                 - name
                 type: object
             required:
+            - kyma
             - scope
             type: object
           status:

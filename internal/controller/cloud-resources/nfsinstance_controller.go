@@ -23,37 +23,38 @@ import (
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/focal"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/scope"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
-	"k8s.io/client-go/tools/record"
-
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/util"
 	"k8s.io/apimachinery/pkg/runtime"
+	"k8s.io/client-go/tools/record"
 	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+	"sigs.k8s.io/controller-runtime/pkg/handler"
 	"sigs.k8s.io/controller-runtime/pkg/log"
 
 	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
 )
 
-// VpcPeeringReconciler reconciles a VpcPeering object
-type VpcPeeringReconciler struct {
+// NfsInstanceReconciler reconciles a NfsInstance object
+type NfsInstanceReconciler struct {
 	client.Client
 	record.EventRecorder
 	Scheme *runtime.Scheme
 }
 
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=vpcpeerings,verbs=get;list;watch;create;update;patch;delete
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=vpcpeerings/status,verbs=get;update;patch
-//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=vpcpeerings/finalizers,verbs=update
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsinstances,verbs=get;list;watch;create;update;patch;delete
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsinstances/status,verbs=get;update;patch
+//+kubebuilder:rbac:groups=cloud-resources.kyma-project.io,resources=nfsinstances/finalizers,verbs=update
 
 // Reconcile is part of the main kubernetes reconciliation loop which aims to
 // move the current state of the cluster closer to the desired state.
 // TODO(user): Modify the Reconcile function to compare the state specified by
-// the VpcPeering object against the actual cluster state, and then
+// the NfsInstance object against the actual cluster state, and then
 // perform operations to make the cluster state reflect the state specified by
 // the user.
 //
 // For more details, check Reconcile and its Result here:
 // - https://pkg.go.dev/sigs.k8s.io/controller-runtime@v0.16.3/pkg/reconcile
-func (r *VpcPeeringReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
+func (r *NfsInstanceReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ctrl.Result, error) {
 	_ = log.FromContext(ctx)
 
 	// TODO: this should be moved into separate reconciler package
@@ -70,8 +71,16 @@ func (r *VpcPeeringReconciler) Reconcile(ctx context.Context, req ctrl.Request) 
 }
 
 // SetupWithManager sets up the controller with the Manager.
-func (r *VpcPeeringReconciler) SetupWithManager(mgr ctrl.Manager) error {
+func (r *NfsInstanceReconciler) SetupWithManager(mgr ctrl.Manager) error {
+	kymaUnstructured := util.NewKymaUnstructured()
 	return ctrl.NewControllerManagedBy(mgr).
-		For(&cloudresourcesv1beta1.VpcPeering{}).
+		For(&cloudresourcesv1beta1.NfsInstance{}).
+		// Kyma CR should be watched on one place only so it gets into the cache
+		// we're using empty handler since we're not interested into starting
+		// reconciliation when Kyma CR changes, we just want them cached
+		Watches(
+			kymaUnstructured,
+			handler.Funcs{},
+		).
 		Complete(r)
 }

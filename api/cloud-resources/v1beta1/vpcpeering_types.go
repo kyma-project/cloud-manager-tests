@@ -28,6 +28,9 @@ type VpcPeeringSpec struct {
 	// +kubebuilder:validation:Required
 	Kyma string `json:"kyma"`
 
+	// +kubebuilder:validation:Required
+	Scope *ScopeRef `json:"scope"`
+
 	// +optional
 	Gcp *GcpVpcPeering `json:"gcp,omitempty"`
 
@@ -57,9 +60,6 @@ type AwsVpcPeering struct {
 type VpcPeeringStatus struct {
 	State StatusState `json:"state,omitempty"`
 
-	// +optional
-	Scope *Scope `json:"scope,omitempty"`
-
 	// List of status conditions to indicate the status of a Peering.
 	// +optional
 	// +listType=map
@@ -79,16 +79,20 @@ type VpcPeering struct {
 	Status VpcPeeringStatus `json:"status,omitempty"`
 }
 
-func (in *VpcPeering) Kyma() string {
+func (in *VpcPeering) KymaName() string {
 	return in.Spec.Kyma
 }
 
-func (in *VpcPeering) Scope() *Scope {
-	return in.Status.Scope
+func (in *VpcPeering) ScopeRef() *ScopeRef {
+	return in.Spec.Scope
 }
 
-func (in *VpcPeering) SetScope(scope *Scope) {
-	in.Status.Scope = scope
+func (in *VpcPeering) SetScopeRef(scopeRef *ScopeRef) {
+	in.Spec.Scope = scopeRef
+}
+
+func (in *VpcPeering) Conditions() *[]metav1.Condition {
+	return &in.Status.Conditions
 }
 
 //+kubebuilder:object:root=true

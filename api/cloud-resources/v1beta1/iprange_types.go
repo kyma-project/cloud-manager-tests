@@ -23,22 +23,21 @@ import (
 // EDIT THIS FILE!  THIS IS SCAFFOLDING FOR YOU TO OWN!
 // NOTE: json tags are required.  Any new fields you add must have json tags for the fields to be serialized.
 
-// NfsShareSpec defines the desired state of NfsShare
-type NfsShareSpec struct {
+// IpRangeSpec defines the desired state of IpRange
+type IpRangeSpec struct {
 	// +kubebuilder:validation:Required
 	Kyma string `json:"kyma"`
 
 	// +kubebuilder:validation:Required
-	Capacity string `json:"capacity"`
+	Scope *ScopeRef `json:"scope"`
+
+	// +kubebuilder:validation:Required
+	Cidr string `json:"cidr"`
 }
 
-// NfsShareStatus defines the observed state of NfsShare
-type NfsShareStatus struct {
-	State    StatusState `json:"state,omitempty"`
-	Capacity string      `json:"capacity,omitempty"`
-
-	// +optional
-	Scope *Scope `json:"scope,omitempty"`
+// IpRangeStatus defines the observed state of IpRange
+type IpRangeStatus struct {
+	State StatusState `json:"state,omitempty"`
 
 	// List of status conditions to indicate the status of a Peering.
 	// +optional
@@ -50,35 +49,40 @@ type NfsShareStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// NfsShare is the Schema for the nfsshares API
-type NfsShare struct {
+// IpRange is the Schema for the ipranges API
+type IpRange struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   NfsShareSpec   `json:"spec,omitempty"`
-	Status NfsShareStatus `json:"status,omitempty"`
+	Spec   IpRangeSpec   `json:"spec,omitempty"`
+	Status IpRangeStatus `json:"status,omitempty"`
 }
 
-func (in *NfsShare) Kyma() string {
+func (in *IpRange) KymaName() string {
 	return in.Spec.Kyma
 }
 
-func (in *NfsShare) Scope() *Scope {
-	return in.Status.Scope
+func (in *IpRange) ScopeRef() *ScopeRef {
+	return in.Spec.Scope
 }
-func (in *NfsShare) SetScope(scope *Scope) {
-	in.Status.Scope = scope
+
+func (in *IpRange) SetScopeRef(scopeRef *ScopeRef) {
+	in.Spec.Scope = scopeRef
+}
+
+func (in *IpRange) Conditions() *[]metav1.Condition {
+	return &in.Status.Conditions
 }
 
 //+kubebuilder:object:root=true
 
-// NfsShareList contains a list of NfsShare
-type NfsShareList struct {
+// IpRangeList contains a list of IpRange
+type IpRangeList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []NfsShare `json:"items"`
+	Items           []IpRange `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&NfsShare{}, &NfsShareList{})
+	SchemeBuilder.Register(&IpRange{}, &IpRangeList{})
 }

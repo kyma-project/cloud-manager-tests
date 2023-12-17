@@ -12,7 +12,7 @@ func findActionName(a Action) string {
 	return fullName
 }
 
-type Action = func(ctx context.Context, state State) (error, context.Context)
+type Action func(ctx context.Context, state State) (error, context.Context)
 
 // ===========================
 
@@ -35,7 +35,7 @@ func ComposeActions(name string, actions ...Action) Action {
 					Info("Running action")
 				err, nextCtx := a(currentCtx, state)
 				lastError = err
-				if err != nil || state.IsStopped() {
+				if err != nil {
 					break loop
 				}
 				if nextCtx != nil {
@@ -47,7 +47,6 @@ func ComposeActions(name string, actions ...Action) Action {
 		l := logger.
 			WithValues(
 				"lastAction", actionName,
-				"result", state.Result(),
 			)
 		if lastError == nil {
 			l.Info("Reconciliation finished")
