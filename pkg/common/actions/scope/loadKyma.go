@@ -2,34 +2,50 @@ package scope
 
 import (
 	"context"
-	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
-	apimachineryapi "k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"k8s.io/apimachinery/pkg/runtime/schema"
-	"k8s.io/apimachinery/pkg/types"
+	"fmt"
+	cloudresourcesv1beta1 "github.com/kyma-project/cloud-resources-control-plane/api/cloud-resources/v1beta1"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/util"
+	apierrors "k8s.io/apimachinery/pkg/api/errors"
+	"k8s.io/apimachinery/pkg/api/meta"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func loadKyma(ctx context.Context, state composedAction.State) (error, context.Context) {
-	logger := composedAction.LoggerFromCtx(ctx)
+func loadKyma(ctx context.Context, st composed.State) (error, context.Context) {
+	logger := composed.LoggerFromCtx(ctx)
+	state := st.(*State)
 
-	u := &apimachineryapi.Unstructured{}
-	u.SetGroupVersionKind(schema.GroupVersionKind{
-		Group:   "operator.kyma-project.io",
-		Version: "v1beta1",
-		Kind:    "Kyma",
-	})
-	err := state.Client().Get(ctx, types.NamespacedName{
-		Namespace: state.Obj().GetNamespace(),
-		Name:      state.(*State).Object().Kyma(),
-	}, u)
-	if err != nil {
-		logger.Error(err, "error loading Kyma CR")
-		return err, nil
+	kymaUnstructured := util.NewKymaUnstructured()
+	err := state.Client().Get(ctx, state.Name(), kymaUnstructured)
+	if apierrors.IsNotFound(err) {
+		meta.SetStatusCondition(state.CommonObj().Conditions(), metav1.Condition{
+			Type:    cloudresourcesv1beta1.ConditionTypeError,
+			Status:  metav1.ConditionTrue,
+			Reason:  cloudresourcesv1beta1.ReasonInvalidKymaName,
+			Message: fmt.Sprintf("The Kyma CR '%s' does not exit", state.Name()),
+		})
+		err = state.UpdateObjStatus(ctx)
+		if err != nil {
+			err = fmt.Errorf("error updating status reason invalid kyma: %w", err)
+			logger.Error(err, "Error loading Kyma")
+			return composed.StopWithRequeue, nil // requeue so object status is updated to invalid kyma
+		}
+
+		return composed.StopAndForget, nil // done, no requeue
 	}
 
-	state.(*State).ShootName = u.GetLabels()["kyma-project.io/shoot-name"]
+	if err != nil {
+		err = fmt.Errorf("error loading Kyma CR: %w", err)
+		logger.Error(err, "Error")
+		return composed.StopWithRequeue, nil // requeue, try again
+	}
 
-	logger = logger.WithValues("shootName", state.(*State).ShootName)
+	// Kyma CR is loaded, read the shootName now
+
+	state.ShootName = kymaUnstructured.GetLabels()["kyma-project.io/shoot-name"]
+
+	logger = logger.WithValues("shootName", state.ShootName)
 	logger.Info("Shoot name found")
 
-	return nil, composedAction.LoggerIntoCtx(ctx, logger)
+	return nil, composed.LoggerIntoCtx(ctx, logger)
 }

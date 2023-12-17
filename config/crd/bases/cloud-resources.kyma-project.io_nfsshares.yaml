@@ -4,20 +4,20 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.13.0
-  name: nfsshares.cloud-resources.kyma-project.io
+  name: nfsinstances.cloud-resources.kyma-project.io
 spec:
   group: cloud-resources.kyma-project.io
   names:
-    kind: NfsShare
-    listKind: NfsShareList
-    plural: nfsshares
-    singular: nfsshare
+    kind: NfsInstance
+    listKind: NfsInstanceList
+    plural: nfsinstances
+    singular: nfsinstance
   scope: Namespaced
   versions:
   - name: v1beta1
     schema:
       openAPIV3Schema:
-        description: NfsShare is the Schema for the nfsshares API
+        description: NfsInstance is the Schema for the nfsinstances API
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
@@ -32,7 +32,7 @@ spec:
           metadata:
             type: object
           spec:
-            description: NfsShareSpec defines the desired state of NfsShare
+            description: NfsInstanceSpec defines the desired state of NfsInstance
             properties:
               aws:
                 properties:
@@ -51,13 +51,18 @@ spec:
                 type: object
               gcp:
                 type: object
-              kyma:
-                type: string
+              scope:
+                properties:
+                  name:
+                    type: string
+                required:
+                - name
+                type: object
             required:
-            - kyma
+            - scope
             type: object
           status:
-            description: NfsShareStatus defines the observed state of NfsShare
+            description: NfsInstanceStatus defines the observed state of NfsInstance
             properties:
               conditions:
                 description: List of status conditions to indicate the status of a
@@ -132,39 +137,6 @@ spec:
                 x-kubernetes-list-map-keys:
                 - type
                 x-kubernetes-list-type: map
-              scope:
-                properties:
-                  aws:
-                    properties:
-                      foo:
-                        type: string
-                    required:
-                    - foo
-                    type: object
-                  azure:
-                    properties:
-                      subscriptionId:
-                        type: string
-                      tenantId:
-                        type: string
-                      vpcNetwork:
-                        type: string
-                    required:
-                    - subscriptionId
-                    - tenantId
-                    - vpcNetwork
-                    type: object
-                  gcp:
-                    properties:
-                      project:
-                        type: string
-                      vpcNetwork:
-                        type: string
-                    required:
-                    - project
-                    - vpcNetwork
-                    type: object
-                type: object
               state:
                 type: string
             type: object

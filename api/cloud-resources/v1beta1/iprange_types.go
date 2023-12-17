@@ -29,15 +29,15 @@ type IpRangeSpec struct {
 	Kyma string `json:"kyma"`
 
 	// +kubebuilder:validation:Required
+	Scope *ScopeRef `json:"scope"`
+
+	// +kubebuilder:validation:Required
 	Cidr string `json:"cidr"`
 }
 
 // IpRangeStatus defines the observed state of IpRange
 type IpRangeStatus struct {
 	State StatusState `json:"state,omitempty"`
-
-	// +optional
-	Scope *ScopeX `json:"scope,omitempty"`
 
 	// List of status conditions to indicate the status of a Peering.
 	// +optional
@@ -58,15 +58,20 @@ type IpRange struct {
 	Status IpRangeStatus `json:"status,omitempty"`
 }
 
-func (in *IpRange) Kyma() string {
+func (in *IpRange) KymaName() string {
 	return in.Spec.Kyma
 }
 
-func (in *IpRange) Scope() *ScopeX {
-	return in.Status.Scope
+func (in *IpRange) ScopeRef() *ScopeRef {
+	return in.Spec.Scope
 }
-func (in *IpRange) SetScope(scope *ScopeX) {
-	in.Status.Scope = scope
+
+func (in *IpRange) SetScopeRef(scopeRef *ScopeRef) {
+	in.Spec.Scope = scopeRef
+}
+
+func (in *IpRange) Conditions() *[]metav1.Condition {
+	return &in.Status.Conditions
 }
 
 //+kubebuilder:object:root=true

@@ -1,20 +1,20 @@
-# permissions for end users to view nfsshares.
+# permissions for end users to view nfsinstances.
 apiVersion: rbac.authorization.k8s.io/v1
 kind: ClusterRole
 metadata:
   labels:
     app.kubernetes.io/name: clusterrole
-    app.kubernetes.io/instance: nfsshare-viewer-role
+    app.kubernetes.io/instance: nfsinstance-viewer-role
     app.kubernetes.io/component: rbac
     app.kubernetes.io/created-by: cloud-resources-control-plane
     app.kubernetes.io/part-of: cloud-resources-control-plane
     app.kubernetes.io/managed-by: kustomize
-  name: nfsshare-viewer-role
+  name: nfsinstance-viewer-role
 rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares
+  - nfsinstances
   verbs:
   - get
   - list
@@ -22,6 +22,6 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares/status
+  - nfsinstances/status
   verbs:
   - get

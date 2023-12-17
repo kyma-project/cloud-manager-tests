@@ -18,9 +18,11 @@ package cloudresources
 
 import (
 	"context"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/abstractions"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions"
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/focal"
-	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/scope"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
 	"k8s.io/client-go/tools/record"
 
 	"k8s.io/apimachinery/pkg/runtime"
@@ -55,8 +57,11 @@ func (r *IpRangeReconciler) Reconcile(ctx context.Context, req ctrl.Request) (ct
 	_ = log.FromContext(ctx)
 
 	// TODO: this should be moved into separate reconciler package
-	state := focal.NewState(
-		composedAction.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.IpRange{}),
+	state := scope.NewState(
+		focal.NewState(
+			composed.NewState(r.Client, r.EventRecorder, req.NamespacedName, &cloudresourcesv1beta1.VpcPeering{}),
+		),
+		abstractions.NewFileReader(),
 	)
 	action := actions.New()
 	err, _ := action(ctx, state)

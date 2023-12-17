@@ -36,38 +36,38 @@ const (
 	AwsThroughputModeBursting = "Bursting"
 )
 
-// NfsShareSpec defines the desired state of NfsShare
-type NfsShareSpec struct {
+// NfsInstanceSpec defines the desired state of NfsInstance
+type NfsInstanceSpec struct {
 	// +kubebuilder:validation:Required
 	Kyma string `json:"kyma"`
 
-	// +optional
-	Gcp *NfsShareGcp `json:"gcp,omitempty"`
+	// +kubebuilder:validation:Required
+	Scope *ScopeRef `json:"scope"`
 
 	// +optional
-	Azure *NfsShareAzure `json:"azure,omitempty"`
+	Gcp *NfsInstanceGcp `json:"gcp,omitempty"`
 
 	// +optional
-	Aws *NfsShareAws `json:"aws,omitempty"`
+	Azure *NfsInstanceAzure `json:"azure,omitempty"`
+
+	// +optional
+	Aws *NfsInstanceAws `json:"aws,omitempty"`
 }
 
-type NfsShareGcp struct {
+type NfsInstanceGcp struct {
 }
 
-type NfsShareAzure struct {
+type NfsInstanceAzure struct {
 }
 
-type NfsShareAws struct {
+type NfsInstanceAws struct {
 	Type       AwsFileSystemType `json:"type,omitempty"`
 	Throughput AwsThroughputMode `json:"throughput,omitempty"`
 }
 
-// NfsShareStatus defines the observed state of NfsShare
-type NfsShareStatus struct {
+// NfsInstanceStatus defines the observed state of NfsInstance
+type NfsInstanceStatus struct {
 	State StatusState `json:"state,omitempty"`
-
-	// +optional
-	Scope *ScopeX `json:"scope,omitempty"`
 
 	// List of status conditions to indicate the status of a Peering.
 	// +optional
@@ -79,35 +79,40 @@ type NfsShareStatus struct {
 //+kubebuilder:object:root=true
 //+kubebuilder:subresource:status
 
-// NfsShare is the Schema for the nfsshares API
-type NfsShare struct {
+// NfsInstance is the Schema for the nfsinstances API
+type NfsInstance struct {
 	metav1.TypeMeta   `json:",inline"`
 	metav1.ObjectMeta `json:"metadata,omitempty"`
 
-	Spec   NfsShareSpec   `json:"spec,omitempty"`
-	Status NfsShareStatus `json:"status,omitempty"`
+	Spec   NfsInstanceSpec   `json:"spec,omitempty"`
+	Status NfsInstanceStatus `json:"status,omitempty"`
 }
 
-func (in *NfsShare) Kyma() string {
+func (in *NfsInstance) KymaName() string {
 	return in.Spec.Kyma
 }
 
-func (in *NfsShare) Scope() *ScopeX {
-	return in.Status.Scope
+func (in *NfsInstance) ScopeRef() *ScopeRef {
+	return in.Spec.Scope
 }
-func (in *NfsShare) SetScope(scope *ScopeX) {
-	in.Status.Scope = scope
+
+func (in *NfsInstance) SetScopeRef(scopeRef *ScopeRef) {
+	in.Spec.Scope = scopeRef
+}
+
+func (in *NfsInstance) Conditions() *[]metav1.Condition {
+	return &in.Status.Conditions
 }
 
 //+kubebuilder:object:root=true
 
-// NfsShareList contains a list of NfsShare
-type NfsShareList struct {
+// NfsInstanceList contains a list of NfsInstance
+type NfsInstanceList struct {
 	metav1.TypeMeta `json:",inline"`
 	metav1.ListMeta `json:"metadata,omitempty"`
-	Items           []NfsShare `json:"items"`
+	Items           []NfsInstance `json:"items"`
 }
 
 func init() {
-	SchemeBuilder.Register(&NfsShare{}, &NfsShareList{})
+	SchemeBuilder.Register(&NfsInstance{}, &NfsInstanceList{})
 }

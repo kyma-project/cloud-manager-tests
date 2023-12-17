@@ -33,7 +33,7 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares
+  - nfsinstances
   verbs:
   - create
   - delete
@@ -45,13 +45,13 @@ rules:
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares/finalizers
+  - nfsinstances/finalizers
   verbs:
   - update
 - apiGroups:
   - cloud-resources.kyma-project.io
   resources:
-  - nfsshares/status
+  - nfsinstances/status
   verbs:
   - get
   - patch

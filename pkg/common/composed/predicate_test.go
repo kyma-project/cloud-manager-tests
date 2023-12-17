@@ -15,9 +15,9 @@ func (me *PredicateSuite) TestRunsTrueAction() {
 	isTrueActionCalled := false
 	a := BuildBranchingAction(
 		"runsTrue",
-		func(ctx context.Context, state State) bool {
+		Predicate(func(ctx context.Context, state State) bool {
 			return true
-		},
+		}),
 		func(ctx context.Context, state State) (error, context.Context) {
 			isTrueActionCalled = true
 			return nil, nil
@@ -38,9 +38,9 @@ func (me *PredicateSuite) TestRunsFalseAction() {
 	isFalseActionCalled := false
 	a := BuildBranchingAction(
 		"runsTrue",
-		func(ctx context.Context, state State) bool {
+		Predicate(func(ctx context.Context, state State) bool {
 			return false
-		},
+		}),
 		func(ctx context.Context, state State) (error, context.Context) {
 			assert.Fail(me.T(), "trueAction should not be called")
 			return nil, nil

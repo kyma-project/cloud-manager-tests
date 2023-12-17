@@ -25,9 +25,9 @@ type composedActionTestState struct {
 }
 
 func buildTestAction(logName string, err error) Action {
-	return func(ctx context.Context, state State) (error, context.Context) {
-		st := state.(*composedActionTestState)
-		st.log = append(st.log, logName)
+	return func(ctx context.Context, st State) (error, context.Context) {
+		state := st.(*composedActionTestState)
+		state.log = append(state.log, logName)
 		return err, nil
 	}
 }
@@ -73,14 +73,14 @@ func (me *composedActionSuite) TestBreaksOnFirstError() {
 }
 
 func buildDelayedTestAction(logName string, delay time.Duration, err error) Action {
-	return func(ctx context.Context, state State) (error, context.Context) {
-		st := state.(*composedActionTestState)
-		st.log = append(st.log, logName+".start")
+	return func(ctx context.Context, st State) (error, context.Context) {
+		state := st.(*composedActionTestState)
+		state.log = append(state.log, logName+".start")
 		select {
 		case <-ctx.Done():
-			st.log = append(st.log, logName+".canceled")
+			state.log = append(state.log, logName+".canceled")
 		case <-time.After(delay):
-			st.log = append(st.log, logName+".end")
+			state.log = append(state.log, logName+".end")
 		}
 		return err, nil
 	}

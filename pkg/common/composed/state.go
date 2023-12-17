@@ -2,14 +2,11 @@ package composed
 
 import (
 	"context"
-	"fmt"
 	"github.com/go-logr/logr"
 	"k8s.io/apimachinery/pkg/types"
 	"k8s.io/client-go/tools/record"
-	ctrl "sigs.k8s.io/controller-runtime"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/controller-runtime/pkg/log"
-	"time"
 )
 
 func LoggerFromCtx(ctx context.Context) logr.Logger {
@@ -28,12 +25,6 @@ type State interface {
 	Name() types.NamespacedName
 	Obj() client.Object
 
-	Result() ctrl.Result
-	RequeueIfError(err error, msg ...string) error
-	Stop(err error, msg ...string) error
-	StopWithRequeue() error
-	IsStopped() bool
-
 	LoadObj(ctx context.Context, opts ...client.GetOption) error
 	UpdateObj(ctx context.Context, opts ...client.UpdateOption) error
 	UpdateObjStatus(ctx context.Context, opts ...client.SubResourceUpdateOption) error
@@ -50,49 +41,15 @@ func NewState(
 		eventRecorder: eventRecorder,
 		name:          name,
 		obj:           obj,
-		result:        ctrl.Result{},
 	}
 }
 
 type baseState struct {
-	result        ctrl.Result
 	client        client.Client
 	eventRecorder record.EventRecorder
 	name          types.NamespacedName
 	obj           client.Object
-	stopped       bool
 	nextCtxHanler func(ctx context.Context)
-}
-
-func (s *baseState) NextCtxHanler(cb func(ctx context.Context)) {
-	s.nextCtxHanler = cb
-}
-
-func (s *baseState) NextCtx(ctx context.Context) {
-	if s.nextCtxHanler != nil {
-		s.nextCtxHanler(ctx)
-	}
-}
-
-func (s *baseState) StopWithRequeue() error {
-	s.stopped = true
-	s.result.Requeue = true
-	return nil
-}
-
-func (s *baseState) Stop(err error, msg ...string) error {
-	s.stopped = true
-	if err == nil {
-		return nil
-	}
-	if len(msg) == 0 || len(msg[0]) == 0 {
-		return err
-	}
-	return fmt.Errorf("%s: %w", msg[0], err)
-}
-
-func (s *baseState) IsStopped() bool {
-	return s.stopped
 }
 
 func (s *baseState) Client() client.Client {
@@ -109,25 +66,6 @@ func (s *baseState) Name() types.NamespacedName {
 
 func (s *baseState) Obj() client.Object {
 	return s.obj
-}
-
-func (s *baseState) Result() ctrl.Result {
-	return s.result
-}
-
-func (s *baseState) RequeueIfError(err error, msg ...string) error {
-	if err == nil {
-		return nil
-	}
-	s.result.Requeue = true
-	if len(msg) == 0 {
-		return err
-	}
-	return fmt.Errorf("%s: %w", msg[0], err)
-}
-
-func (s *baseState) RequeueAfter(t time.Duration) {
-	s.result.RequeueAfter = t
 }
 
 func (s *baseState) LoadObj(ctx context.Context, opts ...client.GetOption) error {

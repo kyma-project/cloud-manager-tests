@@ -3,24 +3,23 @@ package scope
 import (
 	"context"
 	"fmt"
-	"github.com/kyma-project/cloud-resources-control-plane/pkg/common"
-	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
 )
 
-func defineScope(ctx context.Context, st composedAction.State) (error, context.Context) {
+func handleScope(ctx context.Context, st composed.State) (error, context.Context) {
 	state := st.(*State)
-
 	switch state.Provider {
-	case common.ProviderGCP:
+	case ProviderGCP:
 		return defineScopeGcp(ctx, state)
-	case common.ProviderAzure:
+	case ProviderAzure:
 		return defineScopeAzure(ctx, state)
-	case common.ProviderAws:
+	case ProviderAws:
 		return defineScopeAws(ctx, state)
 	}
 
 	err := fmt.Errorf("unable to handle unknown provider '%s'", state.Provider)
-	logger := composedAction.LoggerFromCtx(ctx)
+	logger := composed.LoggerFromCtx(ctx)
 	logger.Error(err, "Error defining scope")
-	return state.Stop(nil), nil // no requeue
+	return composed.StopAndForget, nil // no requeue
+
 }

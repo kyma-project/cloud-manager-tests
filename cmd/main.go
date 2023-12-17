@@ -96,11 +96,11 @@ func main() {
 		os.Exit(1)
 	}
 
-	if err = (&cloudresourcescontroller.NfsShareReconciler{
+	if err = (&cloudresourcescontroller.NfsInstanceReconciler{
 		Client: mgr.GetClient(),
 		Scheme: mgr.GetScheme(),
 	}).SetupWithManager(mgr); err != nil {
-		setupLog.Error(err, "unable to create controller", "controller", "NfsShare")
+		setupLog.Error(err, "unable to create controller", "controller", "NfsInstance")
 		os.Exit(1)
 	}
 	if err = (&cloudresourcescontroller.VpcPeeringReconciler{

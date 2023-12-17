@@ -2,25 +2,21 @@ package scope
 
 import (
 	"context"
-	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/abstractions"
-	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/actions/focal"
-	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
 )
 
-func WhenNoScope(fileReader abstractions.FileReader) composedAction.Action {
-	return func(ctx context.Context, st composedAction.State) (error, context.Context) {
-		state := st.(*focal.State)
-		if state.Object().Scope() != nil {
-			logger := composedAction.LoggerFromCtx(ctx)
-			logger.Info("Object has scope")
-			return nil, nil // continue
-		}
-
-		logger := composedAction.LoggerFromCtx(ctx)
-		logger.Info("Object has no scope, running define scope branch")
-
-		scopeState := NewState(state, fileReader)
-		action := New()
-		return action(ctx, scopeState)
-	}
+func WhenNoScope() composed.Action {
+	return composed.ComposeActions(
+		"whenNoScope",
+		loadKyma,
+		createGardenerClient,
+		loadShoot,
+		loadGardenerCredentials,
+		handleScope,
+		// just in case actions before didn't stopped it
+		// scope is created, requeue now
+		func(_ context.Context, state composed.State) (error, context.Context) {
+			return composed.StopWithRequeue, nil
+		},
+	)
 }

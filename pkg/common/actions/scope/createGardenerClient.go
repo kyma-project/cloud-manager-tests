@@ -4,16 +4,15 @@ import (
 	"context"
 	"fmt"
 	gardenerClient "github.com/gardener/gardener/pkg/client/core/clientset/versioned/typed/core/v1beta1"
+	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
 	kubernetesClient "k8s.io/client-go/kubernetes"
-
-	composedAction "github.com/kyma-project/cloud-resources-control-plane/pkg/common/composedAction"
 	"k8s.io/client-go/tools/clientcmd"
 	clientcmdapi "k8s.io/client-go/tools/clientcmd/api"
 	"os"
 )
 
-func createGardenerClient(ctx context.Context, st composedAction.State) (error, context.Context) {
-	logger := composedAction.LoggerFromCtx(ctx)
+func createGardenerClient(ctx context.Context, st composed.State) (error, context.Context) {
+	logger := composed.LoggerFromCtx(ctx)
 	state := st.(*State)
 	fn := os.Getenv("GARDENER_CREDENTIALS")
 	if len(fn) == 0 {
@@ -26,7 +25,7 @@ func createGardenerClient(ctx context.Context, st composedAction.State) (error, 
 	if err != nil {
 		err = fmt.Errorf("error loading gardener credentials: %w", err)
 		logger.Error(err, "error creating gardener client")
-		return state.Stop(nil), nil // no requeue
+		return composed.StopAndForget, nil // no requeue
 	}
 
 	config, err := clientcmd.NewClientConfigFromBytes(kubeBytes)
@@ -60,14 +59,14 @@ func createGardenerClient(ctx context.Context, st composedAction.State) (error, 
 	if err != nil {
 		err = fmt.Errorf("error creating gardener rest config: %w", err)
 		logger.Error(err, "error creating gardener client")
-		return state.Stop(nil), nil // no requeue
+		return composed.StopAndForget, nil // no requeue
 	}
 
 	gClient, err := gardenerClient.NewForConfig(restConfig)
 	if err != nil {
 		err = fmt.Errorf("error creating gardener client: %w", err)
 		logger.Error(err, "error creating gardener client")
-		return state.Stop(nil), nil // no requeue
+		return composed.StopAndForget, nil // no requeue
 	}
 
 	state.GardenerClient = gClient
@@ -76,12 +75,12 @@ func createGardenerClient(ctx context.Context, st composedAction.State) (error, 
 	if err != nil {
 		err = fmt.Errorf("error creating gardene k8s client: %w", err)
 		logger.Error(err, "error creating gardene k8s client")
-		return state.Stop(nil), nil // no requeue
+		return composed.StopAndForget, nil // no requeue
 	}
 
 	state.GardenK8sClient = k8sClient
 
 	logger.Info("Gardener clients created")
 
-	return nil, composedAction.LoggerIntoCtx(ctx, logger)
+	return nil, composed.LoggerIntoCtx(ctx, logger)
 }
