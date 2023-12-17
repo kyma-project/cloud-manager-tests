@@ -10,7 +10,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func defineScopeGcp(ctx context.Context, st composed.State) (error, context.Context) {
+func createScopeGcp(ctx context.Context, st composed.State) (error, context.Context) {
 	logger := composed.LoggerFromCtx(ctx)
 	state := st.(*State)
 
@@ -36,7 +36,7 @@ func defineScopeGcp(ctx context.Context, st composed.State) (error, context.Cont
 		return composed.StopAndForget, nil // no requeue
 	}
 
-	scope := &cloudresourcesv1beta1.Scope{
+	state.Scope = &cloudresourcesv1beta1.Scope{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      state.Obj().GetName(),
 			Namespace: state.Obj().GetNamespace(),
@@ -53,23 +53,5 @@ func defineScopeGcp(ctx context.Context, st composed.State) (error, context.Cont
 		},
 	}
 
-	err = state.Client().Create(ctx, scope)
-	if err != nil {
-		err = fmt.Errorf("error creating scope: %w", err)
-		logger.Error(err, "error saving GCP scope")
-		return composed.StopWithRequeue, nil // will requeue
-	}
-
-	state.CommonObj().SetScopeRef(&cloudresourcesv1beta1.ScopeRef{
-		Name: scope.Name,
-	})
-
-	err = state.UpdateObj(ctx)
-	if err != nil {
-		err = fmt.Errorf("error updating object scope ref: %w", err)
-		logger.Error(err, "error saving object with Gcp scope ref")
-		return composed.StopWithRequeue, nil // will requeue
-	}
-
-	return composed.StopWithRequeue, nil
+	return nil, nil
 }

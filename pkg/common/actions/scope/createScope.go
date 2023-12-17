@@ -6,15 +6,15 @@ import (
 	"github.com/kyma-project/cloud-resources-control-plane/pkg/common/composed"
 )
 
-func handleScope(ctx context.Context, st composed.State) (error, context.Context) {
+func createScope(ctx context.Context, st composed.State) (error, context.Context) {
 	state := st.(*State)
 	switch state.Provider {
 	case ProviderGCP:
-		return defineScopeGcp(ctx, state)
+		return createScopeGcp(ctx, state)
 	case ProviderAzure:
-		return defineScopeAzure(ctx, state)
+		return createScopeAzure(ctx, state)
 	case ProviderAws:
-		return defineScopeAws(ctx, state)
+		return createScopeAws(ctx, state)
 	}
 
 	err := fmt.Errorf("unable to handle unknown provider '%s'", state.Provider)

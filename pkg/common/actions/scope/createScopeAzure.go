@@ -9,7 +9,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func defineScopeAzure(ctx context.Context, st composed.State) (error, context.Context) {
+func createScopeAzure(ctx context.Context, st composed.State) (error, context.Context) {
 	logger := composed.LoggerFromCtx(ctx)
 	state := st.(*State)
 
@@ -27,7 +27,7 @@ func defineScopeAzure(ctx context.Context, st composed.State) (error, context.Co
 		return composed.StopAndForget, nil // no requeue
 	}
 
-	scope := &cloudresourcesv1beta1.Scope{
+	state.Scope = &cloudresourcesv1beta1.Scope{
 		ObjectMeta: metav1.ObjectMeta{
 			Name:      state.Obj().GetName(),
 			Namespace: state.Obj().GetNamespace(),
@@ -48,24 +48,5 @@ func defineScopeAzure(ctx context.Context, st composed.State) (error, context.Co
 		},
 	}
 
-	err := state.Client().Create(ctx, scope)
-	if err != nil {
-		err = fmt.Errorf("error creating scope: %w", err)
-		logger.Error(err, "error saving Azure scope")
-		return composed.StopWithRequeue, nil // will requeue
-	}
-
-	state.CommonObj().SetScopeRef(&cloudresourcesv1beta1.ScopeRef{
-		Name: scope.Name,
-	})
-
-	err = state.UpdateObj(ctx)
-	if err != nil {
-		err = fmt.Errorf("error updating object scope ref: %w", err)
-		logger.Error(err, "error saving object with Azure scope ref")
-		return composed.StopWithRequeue, nil // will requeue
-	}
-
-	// scope ref is set, can retry new
-	return composed.StopWithRequeue, nil
+	return nil, nil
 }
