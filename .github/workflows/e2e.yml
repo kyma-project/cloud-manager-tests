@@ -17,7 +17,7 @@ jobs:
         run: |
           go mod tidy
           go mod download
-          go build -o bin/manager cmd/main.go
+          go build -o bin/kfr cmd/main.go
       - name: Foo
         run: |
           ls -la
