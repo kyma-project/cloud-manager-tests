@@ -2,11 +2,49 @@ name: E2E Tests
 
 on:
   workflow_dispatch:
-  pull_request:
+    inputs:
+      environment:
+        description: Environment where to run tests
+        required: true
+        type: environment
+        default: dev
 
 jobs:
-  test:
+  define-matrix:
     runs-on: ubuntu-latest
+    outputs:
+      subaccounts: ${{ steps.subaccounts.outputs.subaccounts }}
+    steps:
+      - name: Download BTP CLI
+        run: |
+          curl --cookie 'eula_3_2_agreed=tools.hana.ondemand.com/developer-license-3_2.txt' -o btp.tar.gz https://tools.hana.ondemand.com/additional/btp-cli-linux-amd64-2.64.0.tar.gz
+          tar -xvzf btp.tar.gz
+          mv ./linux-amd64/btp .
+          rm btp.tar.gz
+          rm -r ./linux-amd64
+      - name: BTP Login
+        env:
+          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
+          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
+          BTP_URL: ${{ vars.BTP_URL }}
+          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
+          BTP_IDP: ${{ vars.BTP_IDP }}
+        run: |
+          btp login --url "$BTP_URL" --subdomain "$BTP_SUBDOMAIN" --idp "$BTP_IDP" --user "$IAS_USERNAME" --password "$IAS_PASSWORD"
+          btp set config --format json
+      - name: Find subaccounts
+        id: subaccounts
+        run: |
+          btp list accounts/subaccount --labels-filter phx-e2e=true > subaccount-details.json
+          jq -c '. | .value[]  |=  .guid  | .value' subaccount-details.json > subaccounts.json
+          echo "subaccounts=`cat subaccounts.json`" >> "$GITHUB_OUTPUT"
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: define-matrix
+    strategy:
+      matrix:
+        subaccount: ${{ fromJSON(needs.define-matrix.outputs.subaccounts) }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Go ${{ matrix.go-version }}
@@ -18,7 +56,18 @@ jobs:
           go mod tidy
           go mod download
           go build -o bin/kfr cmd/main.go
-      - name: Foo
+      - name: BTP Login
+        env:
+          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
+          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
+          BTP_URL: ${{ vars.BTP_URL }}
+          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
+          BTP_IDP: ${{ vars.BTP_IDP }}
         run: |
-          ls -la
-          ls -la ./bin/
+          btp login --url "$BTP_URL" --subdomain "$BTP_SUBDOMAIN" --idp "$BTP_IDP" --user "$IAS_USERNAME" --password "$IAS_PASSWORD"
+          btp set config --format json
+          btp list accounts/subaccount
+      
+          btp list accounts/subaccount --labels-filter phx-e2e=true > subaccounts.json
+          jq -c '. | .value[]  |=  .guid  | .value' subaccounts.json
+          
