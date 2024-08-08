@@ -10,34 +10,46 @@ on:
         default: dev
 
 jobs:
-  run-tests:
+  define-matrix:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        environment: [dev]
-    environment: ${{ matrix.environment }}
+    outputs:
+      shoots: ${{ steps.shoots.outputs.shoots }}
     steps:
       - uses: actions/checkout@v3
-      - name: Setup Go ${{ matrix.go-version }}
-        uses: actions/setup-go@v5
-        with:
-          go-version: '1.22'
-      - name: Build
+      - name: Find Shoots
+        id: shoots
         run: |
-          go mod tidy
-          go mod download
-          go build -o bin/kfr cmd/main.go
-      - name: Build kubeconfig
-        env:
-          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
-          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
-          BTP_URL: ${{ vars.BTP_URL }}
-          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
-          BTP_IDP: ${{ vars.BTP_IDP }}
-          SKRS: ${{ vars.SKRS }}
-        run: |
-          echo -n $SKRS > params.json
-          cat params.json
+          echo 'shoots=`jq -c ".skrs.dev | keys_unsorted " ./assets/config.json`' >> "$GITHUB_OUTPUT"
+
+#  run-tests:
+#    runs-on: ubuntu-latest
+#    needs: define-matrix
+#    strategy:
+#      matrix:
+#        environment: [dev]
+#    environment: ${{ matrix.environment }}
+#    steps:
+#      - uses: actions/checkout@v3
+#      - name: Setup Go ${{ matrix.go-version }}
+#        uses: actions/setup-go@v5
+#        with:
+#          go-version: '1.22'
+#      - name: Build
+#        run: |
+#          go mod tidy
+#          go mod download
+#          go build -o bin/kfr cmd/main.go
+#      - name: Build kubeconfig
+#        env:
+#          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
+#          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
+#          BTP_URL: ${{ vars.BTP_URL }}
+#          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
+#          BTP_IDP: ${{ vars.BTP_IDP }}
+#          SKRS: ${{ vars.SKRS }}
+#        run: |
+#          echo -n $SKRS > params.json
+#          cat params.json
 
           
           
