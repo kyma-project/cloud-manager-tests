@@ -19,5 +19,4 @@ func Register(ctx *godog.ScenarioContext) {
 	ctx.Step(`^cleanup (.*)$`, cleanup)
 	ctx.Step(`^resource (.*) does not exist$`, resourceDoesNotExist)
 	ctx.Step(`^eventually resource (.*) does not exist$`, eventuallyResourceDoesNotExist)
-	ctx.Step(`^(.*)$`, script)
 }
