@@ -70,8 +70,8 @@ jobs:
           BTP_IDP: ${{ vars.BTP_IDP }}
           SKRS: ${{ vars.SKRS }}
         run: |
-          URL=$(jq '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
-          CA=$(jq '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
+          URL=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
+          CA=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
           TOKEN=$(jq -r '.id_token' ./token.json)
           KC=$(jq ".users[0].user.token = \"$TOKEN\" | .clusters[0].cluster.server = \"$URL\" | .clusters[0].cluster.\"certificate-authority-data\" = \"$CA\"" ./assets/kubeconfig.json)
           echo $KC
