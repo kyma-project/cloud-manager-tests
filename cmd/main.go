@@ -5,8 +5,8 @@ import (
 	"fmt"
 	"github.com/cucumber/godog"
 	"github.com/cucumber/godog/colors"
+	"github.com/kyma-project/cloud-manager-tests/internal"
 	"github.com/onsi/gomega"
-	"github.com/tmilos/k8s-feature-runner/internal"
 	"os"
 	"time"
 )
