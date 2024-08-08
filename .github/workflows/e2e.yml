@@ -19,9 +19,9 @@ jobs:
       - name: Find Shoots
         id: shoots
         run: |
-          jq -c ".skrs.${{ inputs.environment }} | keys_unsorted " ./assets/config.json
-          echo 'shoots=`jq -c ".skrs.${{ inputs.environment }} | keys_unsorted " ./assets/config.json`'
-          echo 'shoots=`jq -c ".skrs.${{ inputs.environment }} | keys_unsorted " ./assets/config.json`' >> "$GITHUB_OUTPUT"
+          SHOOTS=`jq -c ".skrs.${{ inputs.environment }} | keys_unsorted " ./assets/config.json`
+          echo "shoots=$SHOOTS"
+          echo "shoots=$SHOOTS" >> "$GITHUB_OUTPUT"
 
   run-tests:
     runs-on: ubuntu-latest
