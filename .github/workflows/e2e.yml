@@ -68,7 +68,6 @@ jobs:
           BTP_URL: ${{ vars.BTP_URL }}
           BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
           BTP_IDP: ${{ vars.BTP_IDP }}
-          SKRS: ${{ vars.SKRS }}
         run: |
           URL=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
           CA=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
