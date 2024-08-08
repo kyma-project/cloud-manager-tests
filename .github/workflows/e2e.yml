@@ -77,7 +77,7 @@ jobs:
       - name: Run E2E Tests
         run: |
           PROVIDER=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.provider' ./assets/config.json)
-          KUBECONFIG="$(pwd)/kubeconfig.yaml \
+          KUBECONFIG=$(pwd)/kubeconfig.yaml \
             ./bin/kfr \
             -godog.paths $(pwd)/features \
             -godog.tags @$PROVIDER
