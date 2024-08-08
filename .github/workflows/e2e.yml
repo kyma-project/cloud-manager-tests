@@ -43,6 +43,8 @@ jobs:
           go mod tidy
           go mod download
           go build -o bin/kfr cmd/main.go
+      - name: Download kubectl
+        run: curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
       - name: Build token
         env:
           IAS_URL: ${{ vars.IAS_URL }}
@@ -59,18 +61,23 @@ jobs:
             -d "client_id=$IAS_CLIENT_ID" \
             -d "client_secret=$IAS_CLIENT_SECRET" \
             -d 'scope=groups, email' > token.json
-          cat token.json
-#      - name: Build kubeconfig
-#        env:
-#          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
-#          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
-#          BTP_URL: ${{ vars.BTP_URL }}
-#          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
-#          BTP_IDP: ${{ vars.BTP_IDP }}
-#          SKRS: ${{ vars.SKRS }}
-#        run: |
-#          echo -n $SKRS > params.json
-#          cat params.json
+      - name: Build kubeconfig
+        env:
+          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
+          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
+          BTP_URL: ${{ vars.BTP_URL }}
+          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
+          BTP_IDP: ${{ vars.BTP_IDP }}
+          SKRS: ${{ vars.SKRS }}
+        run: |
+          URL=$(jq '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
+          CA=$(jq '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
+          TOKEN=$(jq -r '.id_token' ./token.json)
+          KC=$(jq '.users[0].user.token = "$TOKEN" | .clusters[0].cluster.server = "$URL" | .clusters[0].cluster.certificate-authority-data = "$CA"' ./assets/kubeconfig.json)
+          echo $KC
+          kubectl config view --minify --raw  --kubeconfig <(echo $KC) > kubeconfig.yaml
+          cat kubeconfig.yaml
+
 #  run-tests:
 #    runs-on: ubuntu-latest
 #    needs: define-matrix
