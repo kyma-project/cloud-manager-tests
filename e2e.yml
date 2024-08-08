@@ -1,0 +1,41 @@
+name: E2E Tests
+
+on:
+  workflow_dispatch:
+    inputs:
+      environment:
+        description: Environment where to run tests
+        required: true
+        type: environment
+        default: dev
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        skrs: ${{ fromJSON(vars.SKRS) }}
+    steps:
+      - uses: actions/checkout@v3
+      - name: Setup Go ${{ matrix.go-version }}
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.22'
+      - name: Build
+        run: |
+          go mod tidy
+          go mod download
+          go build -o bin/kfr cmd/main.go
+      - name: Build kubeconfig
+        env:
+          IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
+          IAS_PASSWORD: ${{ secrets.IAS_PASSWORD }}
+          BTP_URL: ${{ vars.BTP_URL }}
+          BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
+          BTP_IDP: ${{ vars.BTP_IDP }}
+        run: |
+          echo -n '${{ matrix.project }}' > params.json
+          cat params.json
+
+          
+          
