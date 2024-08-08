@@ -14,7 +14,8 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        skrs: ${{ fromJSON(vars.SKRS) }}
+        environment: [dev]
+    environment: ${{ matrix.environment }}
     steps:
       - uses: actions/checkout@v3
       - name: Setup Go ${{ matrix.go-version }}
@@ -33,8 +34,9 @@ jobs:
           BTP_URL: ${{ vars.BTP_URL }}
           BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
           BTP_IDP: ${{ vars.BTP_IDP }}
+          SKRS: ${{ vars.SKRS }}
         run: |
-          echo -n '${{ matrix.project }}' > params.json
+          echo -n $SKRS > params.json
           cat params.json
 
           
