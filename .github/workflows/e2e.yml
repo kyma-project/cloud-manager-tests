@@ -73,7 +73,7 @@ jobs:
           URL=$(jq '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
           CA=$(jq '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
           TOKEN=$(jq -r '.id_token' ./token.json)
-          KC=$(jq '.users[0].user.token = "$TOKEN" | .clusters[0].cluster.server = "$URL" | .clusters[0].cluster.certificate-authority-data = "$CA"' ./assets/kubeconfig.json)
+          KC=$(jq '.users[0].user.token = "$TOKEN" | .clusters[0].cluster.server = "$URL" | .clusters[0].cluster."certificate-authority-data" = "$CA"' ./assets/kubeconfig.json)
           echo $KC
           kubectl config view --minify --raw  --kubeconfig <(echo $KC) > kubeconfig.yaml
           cat kubeconfig.yaml
