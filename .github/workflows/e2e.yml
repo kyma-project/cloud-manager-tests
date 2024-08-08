@@ -15,11 +15,22 @@ jobs:
     outputs:
       shoots: ${{ steps.shoots.outputs.shoots }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Find Shoots
         id: shoots
         run: |
-          echo 'shoots=`jq -c ".skrs.dev | keys_unsorted " ./assets/config.json`' >> "$GITHUB_OUTPUT"
+          echo 'shoots=`jq -c ".skrs.${{ inputs.environment }} | keys_unsorted " ./assets/config.json`' >> "$GITHUB_OUTPUT"
+
+  run-tests:
+    runs-on: ubuntu-latest
+    needs: define-matrix
+    strategy:
+      matrix:
+        shoot: ${{ fromJSON(needs.define-matrix.outputs.shoots) }}
+    environment: ${{ inputs.environment }}
+    steps:
+      - name: Check
+        run: echo ${{ matrix.shoot }}
 
 #  run-tests:
 #    runs-on: ubuntu-latest
@@ -29,7 +40,7 @@ jobs:
 #        environment: [dev]
 #    environment: ${{ matrix.environment }}
 #    steps:
-#      - uses: actions/checkout@v3
+#      - uses: actions/checkout@v4
 #      - name: Setup Go ${{ matrix.go-version }}
 #        uses: actions/setup-go@v5
 #        with:
