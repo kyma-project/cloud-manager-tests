@@ -70,15 +70,16 @@ jobs:
           BTP_IDP: ${{ vars.BTP_IDP }}
         run: |
           URL=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
+          echo "URL: $URL"
           CA=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
           TOKEN=$(jq -r '.id_token' ./token.json)
           KC=$(jq ".users[0].user.token = \"$TOKEN\" | .clusters[0].cluster.server = \"$URL\" | .clusters[0].cluster.\"certificate-authority-data\" = \"$CA\"" ./assets/kubeconfig.json)
           kubectl config view --minify --raw  --kubeconfig <(echo $KC) > kubeconfig.yaml
       - name: Run E2E Tests
         run: |
-          PROVIDER=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.provider' ./assets/config.json)
-          KUBECONFIG=$(pwd)/kubeconfig.yaml
-          ENV=${{ inputs.environment }}
+          export PROVIDER=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.provider' ./assets/config.json)
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          export ENV=${{ inputs.environment }}
           ./bin/kfr \
             -godog.paths $(pwd)/features \
             -godog.tags=@all,@$PROVIDER 
