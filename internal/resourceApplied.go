@@ -7,8 +7,6 @@ import (
 	"github.com/cucumber/godog"
 	"gopkg.in/yaml.v3"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"os"
-	"os/exec"
 	"regexp"
 	"strings"
 )
@@ -127,26 +125,5 @@ func resourceApplied(ctx context.Context, ref string, txt *godog.DocString) erro
 		}
 	}
 
-	f, err := os.CreateTemp("", "kfr-*.yaml")
-	if err != nil {
-		return fmt.Errorf("error creating temp file: %w", err)
-	}
-	defer os.Remove(f.Name())
-
-	if err := os.WriteFile(f.Name(), []byte(content), 0644); err != nil {
-		return fmt.Errorf("error writing temp file: %w", err)
-	}
-
-	params := []string{
-		"apply",
-		"-f", f.Name(),
-	}
-	cmd := exec.CommandContext(ctx, "kubectl", params...)
-	out, err := cmd.CombinedOutput()
-
-	if err != nil {
-		return fmt.Errorf("error applying resource: %w: %s", err, string(out))
-	}
-
-	return nil
+	return kfrCtx.K8S.Apply(ctx, content)
 }
