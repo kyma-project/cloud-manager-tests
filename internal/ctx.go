@@ -9,19 +9,23 @@ import (
 	"gopkg.in/yaml.v3"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
 	"math/rand"
-	"os/exec"
 	"strings"
 )
 
 type kfrCtxKey struct{}
 
-type KfrContext struct {
-	Resources map[string]*ResourceDefn
+type KfrValues struct {
+	Provider   string
+	Shoot      string
+	LoadedCRDs map[string]struct{}
+	Env        string
 }
 
-//type Evaluator interface {
-//	Eval(ctx context.Context, exp string) (any, error)
-//}
+type KfrContext struct {
+	Resources map[string]*ResourceDefn
+	K8S       K8sClient
+	Values    KfrValues
+}
 
 var NotFoundError = errors.New("not found")
 
@@ -43,14 +47,6 @@ func KfrToContext(ctx context.Context, kfr *KfrContext) context.Context {
 func KfrFromContext(ctx context.Context) *KfrContext {
 	g, _ := ctx.Value(kfrCtxKey{}).(*KfrContext)
 	return g
-}
-
-func (k *KfrContext) Values() map[string]interface{} {
-	result := make(map[string]interface{}, len(k.Resources))
-	for k, v := range k.Resources {
-		result[k] = v.Value
-	}
-	return result
 }
 
 func (k *KfrContext) Get(varName string) *ResourceDefn {
@@ -92,6 +88,16 @@ func (k *KfrContext) Eval(ctx context.Context, exp string) (any, error) {
 		}
 	}
 
+	if err := vm.GlobalObject().Set("shoot", k.Values.Shoot); err != nil {
+		return nil, fmt.Errorf("error registering shoot: %w", err)
+	}
+	if err := vm.GlobalObject().Set("provider", k.Values.Provider); err != nil {
+		return nil, fmt.Errorf("error registering provider: %w", err)
+	}
+	if err := vm.GlobalObject().Set("env", k.Values.Env); err != nil {
+		return nil, fmt.Errorf("error registering provider: %w", err)
+	}
+
 	if err := vm.GlobalObject().Set("declare", func(ref, kind, name, namespace string, r *goja.Runtime) (any, error) {
 		if ref == "" {
 			return nil, errors.New("declare() requires mandatory first argument resource declatation name")
@@ -111,7 +117,6 @@ func (k *KfrContext) Eval(ctx context.Context, exp string) (any, error) {
 	}
 
 	if err := vm.GlobalObject().Set("load", func(ref string, r *goja.Runtime) (map[string]interface{}, error) {
-
 		rd := k.Get(ref)
 		if rd == nil {
 			chunks := strings.Split(ref, "/")
@@ -195,114 +200,6 @@ func (k *KfrContext) Eval(ctx context.Context, exp string) (any, error) {
 	}
 
 	return val.Export(), nil
-
-	//var celOptions []cel.EnvOption
-	//for _, res := range k.Resources {
-	//	//celOptions = append(celOptions, cel.Constant(res.Var, cel.MapType(cel.StringType, cel.AnyType), types.NewStringInterfaceMap(types.DefaultTypeAdapter, res.Value)))
-	//	celOptions = append(celOptions, cel.Variable(res.Var, cel.MapType(cel.StringType, cel.AnyType)))
-	//}
-	//celOptions = append(celOptions, cel.Constant("ns", cel.StringType, types.String(k.Namespace())))
-	//celOptions = append(celOptions, cel.Macros(
-	//	cel.GlobalMacro("load", 1, func(eh parser.ExprHelper, target ast.Expr, args []ast.Expr) (ast.Expr, *common.Error) {
-	//		kind := args[0].Kind()
-	//		if kind == ast.IdentKind {
-	//			if rd := k.Get(args[0].AsIdent()); rd != nil {
-	//				err := rd.Reload(ctx)
-	//				if err != nil {
-	//					return args[0], eh.NewError(199, fmt.Sprintf("failed to reload resource: %s", err))
-	//				}
-	//				return args[0], nil
-	//			}
-	//			return nil, eh.NewError(199, fmt.Sprintf("load argument %s is not a declared resource", args[0].AsIdent()))
-	//		}
-	//		return nil, eh.NewError(199, fmt.Sprintf("load argument must be identified, but got %d", args[0].Kind()))
-	//	}),
-	//	cel.GlobalMacro("logs", 1, func(eh parser.ExprHelper, target ast.Expr, args []ast.Expr) (ast.Expr, *common.Error) {
-	//		kind := args[0].Kind()
-	//		if kind == ast.IdentKind {
-	//			if rd := k.Get(args[0].AsIdent()); rd != nil {
-	//				if rd.Kind != "Pod" {
-	//					return nil, eh.NewError(199, fmt.Sprintf("logs can be run on kind Pod only, but got %s", rd.Kind))
-	//				}
-	//				txt, err := rd.Logs(ctx)
-	//				if err != nil {
-	//					return nil, eh.NewError(199, fmt.Sprintf("error getting logs for %s: %s", rd.Var, err))
-	//				}
-	//				return eh.NewLiteral(types.String(txt)), nil
-	//			}
-	//			return nil, eh.NewError(199, fmt.Sprintf("logs argument %s is not a declared resource", args[0].AsIdent()))
-	//		}
-	//		return nil, eh.NewError(199, fmt.Sprintf("logs argument must be identified, but got %d", args[0].Kind()))
-	//	}),
-	//	//cel.GlobalVarArgMacro("cleanup", func(eh parser.ExprHelper, target ast.Expr, args []ast.Expr) (ast.Expr, *common.Error) {
-	//	//	for i, arg := range args {
-	//	//		kind := args[0].Kind()
-	//	//		if kind == ast.IdentKind {
-	//	//			if rd := k.Get(args[0].AsIdent()); rd != nil {
-	//	//				err := resourceDeleted(ctx, rd.Var)
-	//	//				if errors.Is(err, NotFoundError) {
-	//	//					continue
-	//	//				}
-	//	//				if err != nil {
-	//	//					return nil, eh.NewError(199, fmt.Sprintf("failed to delete resource %s: %s", rd.Var, err))
-	//	//				}
-	//	//				err = eventuallyValueAssertEquals(ctx, fmt.Sprintf("notFound(load(%s))", rd.Var), "true")
-	//	//				if err != nil {
-	//	//					return nil, eh.NewError(199, fmt.Sprintf("failed to verify resource %s is deleted: %s", rd.Var, err))
-	//	//				}
-	//	//				continue
-	//	//			} else {
-	//	//				return nil, eh.NewError(199, fmt.Sprintf("cleanup argument %s is not a declared resource", arg.AsIdent()))
-	//	//			}
-	//	//		} else {
-	//	//			return nil, eh.NewError(199, fmt.Sprintf("cleanup argument %d must be identifier, but got %d", i, arg.Kind()))
-	//	//		}
-	//	//	}
-	//	//	return eh.NewLiteral(types.Bool(true)), nil
-	//	//}),
-	//	cel.GlobalMacro("notFound", 1, func(eh parser.ExprHelper, target ast.Expr, args []ast.Expr) (ast.Expr, *common.Error) {
-	//		kind := args[0].Kind()
-	//		if kind == ast.IdentKind {
-	//			if rd := k.Get(args[0].AsIdent()); rd != nil {
-	//				if rd.Value == nil {
-	//					return eh.NewLiteral(types.Bool(true)), nil
-	//				}
-	//				return eh.NewLiteral(types.Bool(false)), nil
-	//			}
-	//			return nil, eh.NewError(199, fmt.Sprintf("notFound argument %s is not a declared resource", args[0].AsIdent()))
-	//		}
-	//		return nil, eh.NewError(199, fmt.Sprintf("notFound argument must be identifier, but got %d", args[0].Kind()))
-	//	}),
-	//	cel.GlobalMacro("rndStr", 1, func(eh parser.ExprHelper, target ast.Expr, args []ast.Expr) (ast.Expr, *common.Error) {
-	//		kind := args[0].Kind()
-	//		if kind == ast.LiteralKind {
-	//			l := args[0].AsLiteral().(types.Int)
-	//			val := randString(int(l))
-	//			return eh.NewLiteral(types.String(val)), nil
-	//		}
-	//		return nil, eh.NewError(199, fmt.Sprintf("rndStr argument must be int, but got %d", args[0].Kind()))
-	//	}),
-	//))
-	//env, err := cel.NewEnv(celOptions...)
-	//if err != nil {
-	//	return nil, fmt.Errorf("error creating cel env: %w", err)
-	//}
-	//astr, issues := env.Compile(exp)
-	//if issues != nil && issues.Err() != nil {
-	//	return nil, fmt.Errorf("error compiling: %w", issues.Err())
-	//}
-	//prg, err := env.Program(astr)
-	//if err != nil {
-	//	return nil, fmt.Errorf("error creating program: %w", err)
-	//}
-	//in := k.Values()
-	//in["ns"] = k.Namespace()
-	//val, _, err := prg.Eval(in)
-	//if err != nil {
-	//	return nil, fmt.Errorf("error evaluating: %w", err)
-	//}
-	//
-	//return val.Value(), nil
 }
 
 func (k *KfrContext) Namespace() string {
@@ -355,26 +252,16 @@ func (rd *ResourceDefn) Logs(ctx context.Context) (string, error) {
 		return "", fmt.Errorf("resource logs can not be loaded due to name evaluation error: %w", err)
 	}
 
-	params := []string{
-		"logs",
+	out, err := rd.KfrCtx.K8S.Logs(ctx, rd.Name, rd.Namespace)
+	if errors.Is(err, NotFoundError) {
+		rd.Value = nil
+		return "", err
 	}
-	if len(rd.Namespace) > 0 {
-		params = append(params, "--namespace", rd.Namespace)
-	}
-	params = append(
-		params,
-		rd.Name,
-	)
-	cmd := exec.CommandContext(ctx, "kubectl", params...)
-	out, err := cmd.CombinedOutput()
 	if err != nil {
-		if strings.Contains(string(out), "(NotFound)") {
-			rd.Value = nil
-		}
-		return "", NotFoundError
+		return "", err
 	}
 
-	return string(out), nil
+	return out, nil
 }
 
 func (rd *ResourceDefn) Reload(ctx context.Context) error {
@@ -382,36 +269,35 @@ func (rd *ResourceDefn) Reload(ctx context.Context) error {
 		return fmt.Errorf("resource can not be loaded due to name evaluation error: %w", err)
 	}
 
-	params := []string{
-		"get",
+	val, err := rd.KfrCtx.K8S.Get(ctx, rd.Kind, rd.Name, rd.Namespace)
+	if errors.Is(err, NotFoundError) {
+		rd.Value = nil
+		return err
 	}
-	if len(rd.Namespace) > 0 {
-		params = append(params, "--namespace", rd.Namespace)
-	}
-	params = append(
-		params,
-		rd.Kind,
-		rd.Name,
-		"-o",
-		"yaml",
-	)
-	cmd := exec.CommandContext(ctx, "kubectl", params...)
-	out, err := cmd.CombinedOutput()
 	if err != nil {
-		if strings.Contains(string(out), "(NotFound)") {
-			rd.Value = nil
-		}
-		return NotFoundError
-	}
-
-	val := map[string]interface{}{}
-	err = yaml.Unmarshal(out, &val)
-	if err != nil {
-		return fmt.Errorf("error unmarshalling yaml: %w", err)
+		return err
 	}
 	rd.Value = val
 
-	//godog.Logf(ctx, "%s reloaded", rd.Var)
+	return nil
+}
+
+func (rd *ResourceDefn) Apply(ctx context.Context) error {
+	if err := rd.EvaluateNames(ctx); err != nil {
+		return fmt.Errorf("resource can not be applied due to name evaluation error: %w", err)
+	}
+	if rd.Value == nil {
+		return errors.New("resource has no value and can not be applied")
+	}
+
+	b, err := yaml.Marshal(rd.Value)
+	if err != nil {
+		return fmt.Errorf("error marshalling resource %s to yaml: %w", rd.Var, err)
+	}
+
+	if err := rd.KfrCtx.K8S.Apply(ctx, string(b)); err != nil {
+		return fmt.Errorf("error applying resource %s: %w", rd.Var, err)
+	}
 
 	return nil
 }

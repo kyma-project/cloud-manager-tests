@@ -2,9 +2,8 @@ package internal
 
 import (
 	"context"
+	"errors"
 	"fmt"
-	"os/exec"
-	"strings"
 )
 
 func resourceDeleted(ctx context.Context, ref string) error {
@@ -14,24 +13,13 @@ func resourceDeleted(ctx context.Context, ref string) error {
 		return fmt.Errorf("resource %s is not declated", ref)
 	}
 
-	params := []string{
-		"delete",
-		"--wait=false",
+	err := kfrCtx.K8S.Delete(ctx, rd.Kind, rd.Name, rd.Namespace, false)
+	if errors.Is(err, NotFoundError) {
+		rd.Value = nil
+		return nil
 	}
-	if len(rd.Namespace) > 0 {
-		params = append(params, "-n", rd.Namespace)
-	}
-	params = append(params, rd.Kind, rd.Name)
-
-	cmd := exec.CommandContext(ctx, "kubectl", params...)
-	out, err := cmd.CombinedOutput()
-
 	if err != nil {
-		if strings.Contains(string(out), "(NotFound)") {
-			rd.Value = nil
-			return nil
-		}
-		return fmt.Errorf("error deleting resource: %w: %s", err, string(out))
+		return err
 	}
 
 	return nil

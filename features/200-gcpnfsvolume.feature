@@ -1,17 +1,18 @@
-Feature: AwsNfsVolume feature
+Feature: GcpNfsVolume feature
 
-  Scenario: AwsNfsVolume scenario
+  @gcp @allShoots @allEnvs
+  Scenario: GcpNfsVolume scenario
     Given resource declaration:
-      | vol | AwsNfsVolume          | "vol-"+rndStr(8)     | namespace |
+      | vol | GcpNfsVolume          | "vol-"+rndStr(8)   | namespace |
       | pv  | PersistentVolume      | vol.status.id      |           |
       | pvc | PersistentVolumeClaim | vol.metadata.name  | namespace |
       | pod | Pod                   | "test-vol"         | namespace |
     When resource vol is applied:
       """
       apiVersion: cloud-resources.kyma-project.io/v1beta1
-      kind: AwsNfsVolume
+      kind: GcpNfsVolume
       spec:
-        capacity: 10G
+        capacityGb: 1024
       """
     Then eventually value load("vol").status.state equals "Ready"
     And eventually value load("pv").status.phase equals "Bound"

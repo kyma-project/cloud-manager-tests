@@ -13,14 +13,18 @@ jobs:
   define-matrix:
     runs-on: ubuntu-latest
     outputs:
-      shoots: ${{ steps.shoots.outputs.shoots }}
+      shoots: ${{ steps.define.outputs.shoots }}
+      env: ${{ steps.define.outputs.env }}
     steps:
       - uses: actions/checkout@v4
       - name: Find Shoots
-        id: shoots
+        id: define
         run: |
-          SHOOTS=`jq -c ".skrs.${{ inputs.environment }} | keys_unsorted " ./assets/config.json`
+          ENV="${${{ inputs.environment }}:-dev}"
+          echo "env=$ENV"
+          SHOOTS=`jq -c ".skrs.$ENV | keys_unsorted " ./assets/config.json`
           echo "shoots=$SHOOTS"
+          echo "env=$ENV" >> "$GITHUB_OUTPUT"
           echo "shoots=$SHOOTS" >> "$GITHUB_OUTPUT"
 
   run-tests:
@@ -29,7 +33,7 @@ jobs:
     strategy:
       matrix:
         shoot: ${{ fromJSON(needs.define-matrix.outputs.shoots) }}
-    environment: ${{ inputs.environment }}
+    environment: ${{ needs.define-matrix.outputs.env }}
     steps:
       - name: Print shoot
         run: echo ${{ matrix.shoot }}
@@ -68,10 +72,22 @@ jobs:
           BTP_URL: ${{ vars.BTP_URL }}
           BTP_SUBDOMAIN: ${{ vars.BTP_SUBDOMAIN }}
           BTP_IDP: ${{ vars.BTP_IDP }}
-          SKRS: ${{ vars.SKRS }}
         run: |
-          URL=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.url' ./assets/config.json)
-          CA=$(jq -r '.skrs.${{ inputs.environment }}.${{ matrix.shoot }}.ca' ./assets/config.json)
+          URL=$(jq -r '.skrs.${{ needs.define-matrix.outputs.env }}.${{ matrix.shoot }}.url' ./assets/config.json)
+          echo "URL: $URL"
+          CA=$(jq -r '.skrs.${{ needs.define-matrix.outputs.env }}.${{ matrix.shoot }}.ca' ./assets/config.json)
           TOKEN=$(jq -r '.id_token' ./token.json)
           KC=$(jq ".users[0].user.token = \"$TOKEN\" | .clusters[0].cluster.server = \"$URL\" | .clusters[0].cluster.\"certificate-authority-data\" = \"$CA\"" ./assets/kubeconfig.json)
           kubectl config view --minify --raw  --kubeconfig <(echo $KC) > kubeconfig.yaml
+      - name: Run E2E Tests
+        run: |
+          export SHOOT="${{ matrix.shoot }}"
+          export PROVIDER=$(jq -r '.skrs.${{ needs.define-matrix.outputs.env }}.${{ matrix.shoot }}.provider' ./assets/config.json)
+          export KUBECONFIG=$(pwd)/kubeconfig.yaml
+          export ENV=${{ needs.define-matrix.outputs.env }}
+          echo "shoot=$SHOOT"
+          echo "provider=$PROVIDER"
+          echo "env=$ENV"
+          ./bin/kfr \
+            -godog.paths $(pwd)/features \
+            -godog.tags="@all,@allProviders,@$PROVIDER&&@all,@allShoots,@${{ matrix.shoot }}&&@all,@allEnvs,@$ENV"
