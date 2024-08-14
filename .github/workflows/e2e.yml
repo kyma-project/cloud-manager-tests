@@ -88,4 +88,4 @@ jobs:
           export ENV=${{ matrix.env }}
           ./bin/kfr \
             -godog.paths $(pwd)/features \
-            -godog.tags=@all,@allProviders,@$PROVIDER&&@all,@allShoots,@${{ matrix.shoot }}&&@all,@allEnvs,@$ENV
+            -godog.tags="@all,@allProviders,@$PROVIDER&&@all,@allShoots,@${{ matrix.shoot }}&&@all,@allEnvs,@$ENV"
