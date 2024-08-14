@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         shoot: ${{ fromJSON(needs.define-matrix.outputs.shoots) }}
-        env: ${{ needs.define-matrix.outputs.env }}
+        env: [${{ needs.define-matrix.outputs.env }}]
     environment: ${{ needs.define-matrix.outputs.env }}
     steps:
       - name: Print shoot
