@@ -19,7 +19,6 @@ Feature: Module enable feature
       | AwsNfsVolume     |
       | AwsVpcPeering    |
       | AwsRedisInstance |
-      | GcpNfsVolume     |
     And CRDs do not exist:
       | GcpNfsVolume        |
       | GcpNfsVolumeBackup  |
