@@ -1,6 +1,6 @@
 Feature: AwsNfsVolume feature
 
-  @aws
+  @aws @allShoots @allEnvs
   Scenario: AwsNfsVolume scenario
     Given resource declaration:
       | vol | AwsNfsVolume          | "vol-"+rndStr(8)   | namespace |

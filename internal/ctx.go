@@ -117,7 +117,6 @@ func (k *KfrContext) Eval(ctx context.Context, exp string) (any, error) {
 	}
 
 	if err := vm.GlobalObject().Set("load", func(ref string, r *goja.Runtime) (map[string]interface{}, error) {
-
 		rd := k.Get(ref)
 		if rd == nil {
 			chunks := strings.Split(ref, "/")

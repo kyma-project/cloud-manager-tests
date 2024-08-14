@@ -11,22 +11,37 @@ Feature: Module enable feature
     Then eventually value load("cm").status.state equals "Ready"
 
 
-  @aws
+  @aws @allShoots @dev
   Scenario: Installed CRDs
     When CRDs are loaded
     Then CRDs exist:
-      | IpRange          |               |
-      | AwsNfsVolume     |               |
-      | AwsVpcPeering    | env == "dev"  |
-      | AwsRedisInstance | env == "dev"  |
+      | IpRange          |
+      | AwsNfsVolume     |
+      | AwsVpcPeering    |
+      | AwsRedisInstance |
+      | GcpNfsVolume     |
+    And CRDs do not exist:
+      | GcpNfsVolume        |
+      | GcpNfsVolumeBackup  |
+      | GcpNfsVolumeRestore |
+      | GcpRedisInstance    |
+      | GcpVpcPeering       |
+      | AzureVpcPeering     |
+      | AzureRedisInstance  |
 
-  @gcp
+  @gcp @allShoots @dev
   Scenario: Installed CRDs
     When CRDs are loaded
     Then CRDs exist:
-      | IpRange             |               |
-      | GcpNfsVolume        |               |
-      | GcpNfsVolumeBackup  | env == "dev"  |
-      | GcpNfsVolumeRestore | env == "dev"  |
-      | GcpRedisInstance    | env == "dev"  |
-      | GcpVpcPeering       | env == "dev"  |
+      | IpRange             |
+      | GcpNfsVolume        |
+      | GcpNfsVolumeBackup  |
+      | GcpNfsVolumeRestore |
+      | GcpRedisInstance    |
+      | GcpVpcPeering       |
+    And CRDs do not exist:
+      | AwsNfsVolume       |
+      | AwsVpcPeering      |
+      | AwsRedisInstance   |
+      | AzureVpcPeering    |
+      | AzureRedisInstance |

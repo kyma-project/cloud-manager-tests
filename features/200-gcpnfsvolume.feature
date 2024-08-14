@@ -1,6 +1,6 @@
 Feature: GcpNfsVolume feature
 
-  @gcp
+  @gcp @allShoots @allEnvs
   Scenario: GcpNfsVolume scenario
     Given resource declaration:
       | vol | GcpNfsVolume          | "vol-"+rndStr(8)   | namespace |

@@ -56,4 +56,5 @@ func Register(ctx *godog.ScenarioContext) {
 	ctx.Step(`^module ([^ ]+)? ?is added`, moduleAdded)
 	ctx.Step(`^CRDs are loaded$`, crdsAreLoaded)
 	ctx.Step(`^CRDs exist:$`, crdsExist)
+	ctx.Step(`^CRDs do not exist:$`, crdsDoNotExist)
 }
