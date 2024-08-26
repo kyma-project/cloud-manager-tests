@@ -14,23 +14,31 @@ func eventuallyValueAssertEqualsNoOptions(ctx context.Context, a string, b strin
 
 func eventuallyValueAssertEqualsWithOptions(ctx context.Context, a string, b string, withOpts string) error {
 	timeout := DefaultEventuallyTimeout
-	opts := strings.Split(withOpts, ",")
-	for _, opt := range opts {
-		opt = strings.TrimSpace(opt)
-		// ugly, but for now with just few timeout1-5X works, if you add more, try to find a better implementation
-		switch opt {
-		case "timeout2X":
-			timeout = 2 * timeout
-		case "timeout3X":
-			timeout = 3 * timeout
-		case "timeout4X":
-			timeout = 4 * timeout
-		case "timeout5X":
-			timeout = 5 * timeout
-		default:
-			return fmt.Errorf("unknown option: %s", opt)
+
+	withOpts = strings.TrimSpace(withOpts)
+	if len(withOpts) > 0 {
+		opts := strings.Split(withOpts, ",")
+		for _, opt := range opts {
+			opt = strings.TrimSpace(opt)
+			if opt == "" {
+				continue
+			}
+			// ugly, but for now with just few timeout1-5X works, if you add more, try to find a better implementation.
+			switch opt {
+			case "timeout2X":
+				timeout = 2 * timeout
+			case "timeout3X":
+				timeout = 3 * timeout
+			case "timeout4X":
+				timeout = 4 * timeout
+			case "timeout5X":
+				timeout = 5 * timeout
+			default:
+				return fmt.Errorf("unknown option: %s", opt)
+			}
 		}
 	}
+
 	var errMsg string
 	gm := gomega.NewGomega(func(message string, callerSkip ...int) {
 		errMsg = message
