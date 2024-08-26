@@ -14,7 +14,7 @@ Feature: AwsNfsVolume feature
       spec:
         capacity: 10G
       """
-    Then eventually value load("vol").status.state equals "Ready"
+    Then eventually value load("vol").status.state equals "Ready" with timeout2X
     And eventually value load("pv").status.phase equals "Bound"
     And eventually value load("pvc").status.phase equals "Bound"
 

@@ -6,9 +6,7 @@ import (
 	"github.com/cucumber/godog"
 	"github.com/cucumber/godog/colors"
 	"github.com/kyma-project/cloud-manager-tests/internal"
-	"github.com/onsi/gomega"
 	"os"
-	"time"
 )
 
 var opts = godog.Options{
@@ -22,10 +20,7 @@ func init() {
 }
 
 func main() {
-	gomega.Default.SetDefaultEventuallyTimeout(5 * time.Minute)
-	gomega.Default.SetDefaultEventuallyPollingInterval(10 * time.Second)
-	gomega.Default.SetDefaultConsistentlyDuration(20 * time.Second)
-	gomega.Default.SetDefaultConsistentlyPollingInterval(5 * time.Second)
+	internal.InitGomegaDefaults()
 
 	flag.Parse()
 	o := opts
