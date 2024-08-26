@@ -12,8 +12,9 @@ import (
 )
 
 var opts = godog.Options{
-	Output:      colors.Colored(os.Stdout),
-	Concurrency: 1,
+	Output:        colors.Colored(os.Stdout),
+	Concurrency:   1,
+	StopOnFailure: true,
 }
 
 func init() {
