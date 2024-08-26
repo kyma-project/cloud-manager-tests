@@ -23,7 +23,7 @@ func eventuallyValueAssertEqualsWithOptions(ctx context.Context, a string, b str
 			if opt == "" {
 				continue
 			}
-			// ugly, but for now with just few timeout1-5X works, if you add more, try to find a better implementation
+			// ugly, but for now with just few timeout1-5X works, if you add more, try to find a better implementation.
 			switch opt {
 			case "timeout2X":
 				timeout = 2 * timeout
