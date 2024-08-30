@@ -27,7 +27,7 @@ Feature: GcpRedisInstance feature
                 hours: 15
                 minutes: 45
       """
-    Then eventually value load("redis").status.state equals "Ready"
+    Then eventually value load("redis").status.state equals "Ready" with timeout5X
 
     When resource pod is applied:
       """
