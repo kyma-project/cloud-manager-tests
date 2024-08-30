@@ -13,7 +13,7 @@ Feature: GcpRedisInstance feature
       spec:
         memorySizeGb: 5
         tier: "STANDARD_HA"
-        redisVersion: REDIS_7_1
+        redisVersion: REDIS_7_0
         authEnabled: true
         transitEncryption:
           serverAuthentication: true
