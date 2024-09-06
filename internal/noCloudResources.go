@@ -44,7 +44,7 @@ func noCloudResources(ctx context.Context) error {
 			}
 		}
 		return nil
-	}).
+	}, 5*DefaultEventuallyTimeout).
 		WithArguments(ctx).
 		Should(gomega.Succeed())
 
