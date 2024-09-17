@@ -3,9 +3,10 @@ package internal
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/cucumber/godog"
 	"k8s.io/apimachinery/pkg/apis/meta/v1/unstructured"
-	"os"
 )
 
 func Register(ctx *godog.ScenarioContext) {
@@ -51,6 +52,7 @@ func Register(ctx *godog.ScenarioContext) {
 	ctx.Step(`^resource (.*) is deleted`, resourceDeleted)
 	ctx.Step(`^cleanup (.*)$`, cleanup)
 	ctx.Step(`^resource (.*) does not exist$`, resourceDoesNotExist)
+	ctx.Step(`^eventually resource (.*) does not exist with (.*)$`, eventuallyResourceDoesNotExistWithOptions)
 	ctx.Step(`^eventually resource (.*) does not exist$`, eventuallyResourceDoesNotExist)
 	ctx.Step(`^there are no cloud resources$`, noCloudResources)
 	ctx.Step(`^module ([^ ]+)? ?is removed$`, moduleRemoved)
