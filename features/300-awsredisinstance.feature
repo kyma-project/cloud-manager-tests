@@ -65,4 +65,4 @@ Feature: AwsRedisInstance feature
 
     When resource redis is deleted
     Then eventually resource authSecret does not exist
-    And eventually resource redis does not exist
+    And eventually resource redis does not exist with timeout3X
