@@ -28,6 +28,7 @@ Feature: GcpNfsBackupSchedule feature
          deleteCascade: true
       """
     Then eventually value load("schedule").status.state equals "Active"
+    And eventually value load("schedule").status.lastCreatedBackup is not zero with timeout2X
     And eventually value load("backup").status.state equals "Ready" with timeout2X
 
     When resource schedule is deleted
