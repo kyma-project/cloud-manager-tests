@@ -23,6 +23,7 @@ Feature: Module enable feature
       | GcpNfsVolume        |
       | GcpNfsVolumeBackup  |
       | GcpNfsVolumeRestore |
+      | GcpNfsBackupSchedule|
       | GcpRedisInstance    |
       | GcpVpcPeering       |
       | AzureVpcPeering     |
@@ -36,6 +37,7 @@ Feature: Module enable feature
       | GcpNfsVolume        |
       | GcpNfsVolumeBackup  |
       | GcpNfsVolumeRestore |
+      | GcpNfsBackupSchedule|
       | GcpRedisInstance    |
       | GcpVpcPeering       |
     And CRDs do not exist:
