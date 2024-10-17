@@ -14,7 +14,6 @@ Feature: AwsRedisInstance feature
         cacheNodeType: cache.t3.micro
         engineVersion: "7.0"
         authEnabled: true
-        transitEncryptionEnabled: true
         parameters:
           maxmemory-policy: volatile-lru
           activedefrag: "yes"
