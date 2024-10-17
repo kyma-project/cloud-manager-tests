@@ -79,6 +79,8 @@ jobs:
           TOKEN=$(jq -r '.id_token' ./token.json)
           KC=$(jq ".users[0].user.token = \"$TOKEN\" | .clusters[0].cluster.server = \"$URL\" | .clusters[0].cluster.\"certificate-authority-data\" = \"$CA\"" ./assets/kubeconfig.json)
           kubectl config view --minify --raw  --kubeconfig <(echo $KC) > kubeconfig.yaml
+          echo "kubeconfig"
+          cat kubeconfig.yaml
       - name: Run E2E Tests
         run: |
           export SHOOT="${{ matrix.shoot }}"
