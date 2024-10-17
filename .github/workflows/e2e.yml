@@ -65,6 +65,8 @@ jobs:
             -d "client_id=$IAS_CLIENT_ID" \
             -d "client_secret=$IAS_CLIENT_SECRET" \
             -d 'scope=groups, email' > token.json
+            echo "token"
+            cat token.json
       - name: Build kubeconfig
         env:
           IAS_USERNAME: ${{ secrets.IAS_USERNAME }}
