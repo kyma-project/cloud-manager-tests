@@ -15,7 +15,6 @@ Feature: GcpRedisInstance feature
         tier: "STANDARD_HA"
         redisVersion: REDIS_7_0
         authEnabled: true
-        transitEncryptionMode: SERVER_AUTHENTICATION
         redisConfigs:
           maxmemory-policy: volatile-lru
           activedefrag: "yes"
