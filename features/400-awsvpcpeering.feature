@@ -51,4 +51,4 @@ Feature: AwsVpcPeering feature
     Then eventually resource pod does not exist
 
     When resource peering is deleted
-    THen eventually resource peering does not exist with timeout3X
+    Then eventually resource peering does not exist with timeout3X
