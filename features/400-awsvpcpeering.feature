@@ -9,8 +9,6 @@ Feature: AwsVpcPeering feature
       """
       apiVersion: cloud-resources.kyma-project.io/v1beta1
       kind: AwsVpcPeering
-      metadata:
-        name: e2e
       spec:
         remoteAccountId: "642531956841"
         remoteRegion: "us-east-1"
@@ -24,8 +22,6 @@ Feature: AwsVpcPeering feature
       """
       apiVersion: v1
       kind: Pod
-      metadata:
-        name: awsvpcpeering-demo
       spec:
         containers:
           - name: my-container
@@ -36,16 +32,16 @@ Feature: AwsVpcPeering feature
               requests:
                 memory: 256Mi
                 cpu: "0.2"
-            image: ubuntu
+            image: alpine
             command:
-              - "/bin/bash"
-              - "-c"
-              - "--"
+              - "nc"
             args:
-              - "apt update; apt install netcat-openbsd -y; nc -zv 10.3.136.98"
+              - "-zv"
+              - "10.3.124.194"
+              - "22"
       """
     Then eventually value load("pod").status.phase equals "Succeeded"
-    And value logs("pod").search(/Connection to 10.3.136.98 22 port \[tcp\/\*\] succeeded!/) > -1 equals true
+    And value logs("pod").search(/10.3.124.194 \(10.3.124.194:22\) open/) > -1 equals true
 
     When resource pod is deleted
     Then eventually resource pod does not exist
