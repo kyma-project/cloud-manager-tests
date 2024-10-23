@@ -4,7 +4,7 @@ Feature: AwsVpcPeering feature
   Scenario: AwsVpcPeering scenario
     Given resource declaration:
       | peering | AwsVpcPeering | "peering-"+rndStr(8)       | namespace |
-      | pod     | Pod             | "peering-probe-"+rndStr(8) | namespace |
+      | pod     | Pod           | "peering-probe-"+rndStr(8) | namespace |
     When resource peering is applied:
       """
       apiVersion: cloud-resources.kyma-project.io/v1beta1
