@@ -39,6 +39,7 @@ Feature: AwsVpcPeering feature
               - "-zv"
               - "10.3.124.194"
               - "22"
+        restartPolicy: Never
       """
     Then eventually value load("pod").status.phase equals "Succeeded"
     And value logs("pod").search(/10.3.124.194 \(10.3.124.194:22\) open/) > -1 equals true
