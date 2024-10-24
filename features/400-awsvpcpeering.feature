@@ -16,7 +16,7 @@ Feature: AwsVpcPeering feature
         deleteRemotePeering: true
       """
 
-    Then eventually value load("peering").status.state equals "active" with
+    Then eventually value load("peering").status.state equals "active"
 
     When resource pod is applied:
       """
@@ -39,6 +39,7 @@ Feature: AwsVpcPeering feature
               - "-zv"
               - "10.3.124.194"
               - "22"
+        restartPolicy: Never
       """
     Then eventually value load("pod").status.phase equals "Succeeded"
     And value logs("pod").search(/10.3.124.194 \(10.3.124.194:22\) open/) > -1 equals true
