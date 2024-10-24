@@ -46,3 +46,21 @@ Feature: Module enable feature
       | AwsRedisInstance   |
       | AzureVpcPeering    |
       | AzureRedisInstance |
+
+   @azure @allShoots @dev
+     Scenario: Installed CRDs
+       When CRDs are loaded
+       Then CRDs exist:
+         | IpRange            |
+         | AzureVpcPeering    |
+         | AzureRedisInstance |
+       And CRDs do not exist:
+         | AwsNfsVolume       |
+         | AwsVpcPeering      |
+         | AwsRedisInstance   |
+         | GcpNfsVolume        |
+         | GcpNfsVolumeBackup  |
+         | GcpNfsVolumeRestore |
+         | GcpNfsBackupSchedule|
+         | GcpRedisInstance    |
+         | GcpVpcPeering       |
