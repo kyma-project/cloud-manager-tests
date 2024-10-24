@@ -16,7 +16,7 @@ Feature: AwsVpcPeering feature
         deleteRemotePeering: true
       """
 
-    Then eventually value load("peering").status.state equals "Ready" with
+    Then eventually value load("peering").status.state equals "active" with
 
     When resource pod is applied:
       """
