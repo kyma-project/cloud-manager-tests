@@ -12,8 +12,6 @@
 Example script to run tests from the local machine:
 
 ```
-mkdir test
-cp features/<feature-filename>.feature test
 export SHOOT=<shoot-id>
 export PROVIDER=<provider-id, probably azure, aws or gcp>
 export KUBECONFIG=<path-to-cube-config of above shoot>
