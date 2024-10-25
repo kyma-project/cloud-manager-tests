@@ -32,16 +32,18 @@ Feature: GcpVpcPeering feature
               requests:
                 memory: 256Mi
                 cpu: "0.2"
-            image: alpine:latest
+            image: alpine
             command:
-              - "/bin/sh"
-              - "-c"
-              - "--"
+              - "nc"
             args:
-              - "apk update; apk add netcat-openbsd -y; nc -vz 10.240.254.2 22"
-        """
+              - "-zv"
+              - "10.240.254.2"
+              - "22"
+        restartPolicy: Never
+      """
     Then eventually value load("pod").status.phase equals "Succeeded"
-    And value logs("pod").search(/succeeded!/) > -1 equals true
+    And value logs("pod").search(/10.240.254.2 \(10.240.254.2:22\) open/) > -1 equals true
+
 
     When resource pod is deleted
     Then eventually resource pod does not exist
