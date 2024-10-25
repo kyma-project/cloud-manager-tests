@@ -20,7 +20,7 @@ go mod tidy
 go mod download
 go build -o bin/kfr cmd/main.go
 ./bin/kfr \
--godog.paths $(pwd)/test \
+-godog.paths $(pwd)/features/<your-feature>.feature \
 -godog.tags="@all,@allProviders,@$PROVIDER&&@all,@allShoots,@$SHOOT&&@all,@allEnvs,@$ENV"
 ```
 
