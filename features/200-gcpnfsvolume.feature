@@ -3,13 +3,13 @@ Feature: GcpNfsVolume feature
   @gcp @allShoots @allEnvs
   Scenario: GcpNfsVolume/Backup/Restore scenario
     Given resource declaration:
-      | vol         | GcpNfsVolume          | "vol-200-gcpnfsvolume"                  | namespace |
+      | vol         | GcpNfsVolume          | "vol-200-gcpnfsvolume-"+rndStr(8)       | namespace |
       | pv          | PersistentVolume      | vol.status.id                           |           |
       | pvc         | PersistentVolumeClaim | vol.metadata.name                       | namespace |
-      | pod         | Pod                   | "test-vol-200-gcpnfsvolume"             | namespace |
-      | backup      | GcpNfsVolumeBackup    | "backup-200-gcpnfsvolume"               | namespace |
-      | restore     | GcpNfsVolumeRestore   | "restore-200-gcpnfsvolume"              | namespace |
-      | schedule    | GcpNfsBackupSchedule  | "e2e-test-schedule-gcp-nfs"             | namespace |
+      | pod         | Pod                   | "test-vol-200-gcpnfsvolume-"+rndStr(8)  | namespace |
+      | backup      | GcpNfsVolumeBackup    | "backup-200-gcpnfsvolume-"+rndStr(8)    | namespace |
+      | restore     | GcpNfsVolumeRestore   | "restore-200-gcpnfsvolume-"+rndStr(8)   | namespace |
+      | schedule    | GcpNfsBackupSchedule  | "e2e-test-schedule-gcp-nfs-"+rndStr(8)  | namespace |
       | sch-backup  | GcpNfsVolumeBackup    | schedule.status.lastCreatedBackup.name  | namespace |
     When resource vol is applied:
       """
