@@ -16,7 +16,7 @@ Feature: GcpVpcPeering feature
           remoteVpc: "vpc-peering-e2e-tests"
           importCustomRoutes: false
         """
-    Then eventually value load("vpcPeering").status.type equals "Ready"
+    Then eventually value load("vpcPeering").status.state equals "Connected"
 
     When resource pod is applied:
         """
