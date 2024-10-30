@@ -102,6 +102,25 @@ Feature: AwsNfsVolume feature
     Then eventually value load("pod").status.phase equals "Succeeded"
     And value logs("pod").search(/test line/) > -1 equals true
 
+    When resource schedule is applied:
+      """
+      apiVersion: cloud-resources.kyma-project.io/v1beta1
+      kind: AwsNfsBackupSchedule
+      spec:
+         nfsVolumeRef:
+           name: <(vol.metadata.name)>
+         schedule: "*/5 * * * *"
+         prefix: e2e-test-backup-every-5min
+         deleteCascade: true
+      """
+    Then eventually value load("schedule").status.state equals "Active"
+    And eventually value load("schedule").status.lastCreatedBackup.name is not zero
+    And eventually value load("sch-backup").status.state equals "Ready"
+
+    When resource schedule is deleted
+    Then eventually resource sch-backup does not exist
+    And eventually resource schedule does not exist
+
     When resource pod is deleted
     Then eventually resource pod does not exist
 
