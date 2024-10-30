@@ -39,7 +39,7 @@ Feature: GcpVpcPeering feature
               - "-zv"
               - "10.240.254.2"
               - "22"
-        restartPolicy: Never
+          restartPolicy: Never
       """
     Then eventually value load("pod").status.phase equals "Succeeded"
     And value logs("pod").search(/10.240.254.2 \(10.240.254.2:22\) open/) > -1 equals true
