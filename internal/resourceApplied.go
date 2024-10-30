@@ -56,6 +56,9 @@ func resourceApplied(ctx context.Context, ref string, txt *godog.DocString) erro
 		return errors.New("zero length kind")
 	}
 
+	// set context label to all resources
+	err = unstructured.SetNestedField(val, map[string]interface{}{"context": "cloud-manager-tests"}, "metadata", "labels")
+
 	if len(ref) > 0 {
 		rd = kfrCtx.Get(ref)
 		if rd == nil {

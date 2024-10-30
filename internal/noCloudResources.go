@@ -9,6 +9,18 @@ import (
 
 func noCloudResources(ctx context.Context) error {
 	kfrCtx := KfrFromContext(ctx)
+
+	// First deleting pods that are created for E2E tests so they don't block PVC, PV and NfsVolume deletion
+	podsForE2ETests, err := kfrCtx.K8S.List(ctx, "pods", "-A", "context=cloud-manager-tests")
+	if err != nil {
+		return err
+	}
+	for _, pod := range podsForE2ETests {
+		if err := kfrCtx.K8S.Delete(ctx, "pods", pod.Name, pod.Namespace, false); err != nil {
+			return fmt.Errorf("error deleting pod %s/%s: %w", pod.Namespace, pod.Name, err)
+		}
+	}
+
 	kinds, err := kfrCtx.K8S.CloudResourceKinds(ctx)
 	if err != nil {
 		return err

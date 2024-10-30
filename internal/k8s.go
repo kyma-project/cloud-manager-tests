@@ -172,7 +172,7 @@ func (c *k8sClient) List(ctx context.Context, kind, namespace, labelSelector str
 		params = append(params, "-n", namespace)
 	}
 	if labelSelector != "" {
-		params = append(params, "-l", "'"+labelSelector+"'")
+		params = append(params, "-l", labelSelector)
 	}
 	params = append(params, "-o", "json")
 
