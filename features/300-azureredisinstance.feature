@@ -11,11 +11,10 @@ Feature: AzureRedisInstance feature
       apiVersion: cloud-resources.kyma-project.io/v1beta1
       kind: AzureRedisInstance
       spec:
+        redisVersion: P1
         redisConfiguration:
           maxclients: "8"
         redisVersion: "6.0"
-        sku:
-          capacity: 1
       """
 
     Then eventually value load("redis").status.state equals "Ready" with timeout3X
