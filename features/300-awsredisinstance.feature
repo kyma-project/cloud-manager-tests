@@ -11,7 +11,7 @@ Feature: AwsRedisInstance feature
       apiVersion: cloud-resources.kyma-project.io/v1beta1
       kind: AwsRedisInstance
       spec:
-        cacheNodeType: cache.t3.micro
+        redisTier: P1
         engineVersion: "7.0"
         authEnabled: true
         readReplicas: 1

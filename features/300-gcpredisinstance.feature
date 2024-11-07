@@ -11,8 +11,7 @@ Feature: GcpRedisInstance feature
       apiVersion: cloud-resources.kyma-project.io/v1beta1
       kind: GcpRedisInstance
       spec:
-        memorySizeGb: 5
-        tier: "STANDARD_HA"
+        redisTier: P1
         redisVersion: REDIS_7_0
         authEnabled: true
         redisConfigs:
