@@ -194,7 +194,10 @@ func addKymaModuleInSpec(moduleName string, obj map[string]interface{}) error {
 
 func getKymaModuleStateInStatus(moduleName string, obj map[string]interface{}) (string, error) {
 	modules, exists, err := unstructured.NestedSlice(obj, "status", "modules")
-	if !exists || err != nil {
+	if !exists {
+		return "", nil
+	}
+	if err != nil {
 		return "", fmt.Errorf("error reading kyma status modules: %w", err)
 	}
 
