@@ -14,7 +14,6 @@ Feature: AwsRedisInstance feature
         redisTier: P1
         engineVersion: "7.0"
         authEnabled: true
-        readReplicas: 1
         parameters:
           maxmemory-policy: volatile-lru
           activedefrag: "yes"
