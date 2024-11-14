@@ -11,7 +11,7 @@ Feature: AzureRedisInstance feature
       apiVersion: cloud-resources.kyma-project.io/v1beta1
       kind: AzureRedisInstance
       spec:
-        redisVersion: P1
+        redisTier: P1
         redisConfiguration:
           maxclients: "8"
         redisVersion: "6.0"
