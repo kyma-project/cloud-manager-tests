@@ -128,7 +128,10 @@ func getReloadedKyma(ctx context.Context) (*ResourceDefn, error) {
 
 func getKymaModuleIndexInSpec(moduleName string, obj map[string]interface{}) (int, []interface{}, error) {
 	modules, exists, err := unstructured.NestedSlice(obj, "spec", "modules")
-	if !exists || err != nil {
+	if !exists {
+		return -1, []interface{}{}, nil
+	}
+	if err != nil {
 		return -1, nil, fmt.Errorf("error reading kyma spec modules: %w", err)
 	}
 
