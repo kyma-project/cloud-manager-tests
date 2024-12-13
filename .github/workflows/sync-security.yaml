@@ -13,6 +13,7 @@ jobs:
   run:
     runs-on: ubuntu-latest
     env:
+      GH_DEBUG: "1"
       GH_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@v4
