@@ -3,10 +3,7 @@ on:
   workflow_dispatch:
 
 env:
-  OWNER: kyma-project
-  PROJECT_NUMBER: 55
-  REPO_NAME: cloud-manager-tests
-  GH_REPO: kyma-project/cloud-manager-tests
+  APP_ID: "1228"
 
 permissions:
   repository-projects: write
@@ -14,21 +11,47 @@ permissions:
 jobs:
   run:
     runs-on: ubuntu-latest
-    env:
-      GH_DEBUG: "1"
-      GH_TOKEN: ${{ secrets.PROJECT_PAT }}
     steps:
       - uses: actions/checkout@v4
 
-      - name: List project items with graphQL
+      - name: Print github.com api url
         shell: bash
+        run: |
+          echo "${{ github.api_url }}"
+
+      - name: List github.com project items with graphQL
+        shell: bash
+        env:
+          GH_DEBUG: "1"
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }}
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
-          gh api graphql -F "owner=$OWNER" -F "name=$REPO_NAME" -F "projectNumber=$PROJECT_NUMBER" -f "query=$QUERY"
+          gh api graphql -F owner='kyma-project' -F name='cloud-manager-tests' -F projectNumber=55 -f "query=$QUERY" > items.json
+          jq . items.json
 
-      - name: List project items with cli
+      - uses: actions/create-github-app-token@v1
+        id: app-token
+        with:
+          app-id: "1228"
+          private-key: ${{ secrets.ISSUE_READER_KEY }}
+          owner: kyma
+          repositories: security-scans-modular
+          github-api-url: https://github.tools.sap
+
+      - name: List github.tools issues
         shell: bash
-        if: ${{ !cancelled() }}
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_DEBUG: "1"
+          GH_HOST: github.tools.sap
         run: |
-          echo "gh project item-list $PROJECT_NUMBER --owner $OWNER --format json"
-          gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --format json
+          echo "Issue list"
+          gh issue list \
+            -R kyma/security-scans-modular \
+            -S 'is:open is:issue archived:false label:team/phoenix' \
+            --json id,title,url,labels \
+            > issues.json
+
+          echo "Cat"
+          cat issues.json
+
