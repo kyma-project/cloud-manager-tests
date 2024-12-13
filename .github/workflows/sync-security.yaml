@@ -44,7 +44,14 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           GH_DEBUG: "1"
           GH_HOST: github.tools.sap
+          GH_REPO: kyma/security-scans-modular
         run: |
+          echo "Login"
+          gh auth login -p https --skip-ssh-key --with-token <<< "$GH_TOKEN"
+
+          echo "Auth status"
+          gh auth status || true
+          
           echo "Issue list"
           gh issue list \
             -R kyma/security-scans-modular \
