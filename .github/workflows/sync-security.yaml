@@ -36,7 +36,7 @@ jobs:
           private-key: ${{ secrets.ISSUE_READER_KEY }}
           owner: kyma
           repositories: security-scans-modular
-          github-api-url: https://github.tools.sap
+          github-api-url: https://github.tools.sap/api/v3
 
       - name: List github.tools issues
         shell: bash
