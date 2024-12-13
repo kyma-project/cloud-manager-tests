@@ -23,4 +23,4 @@ jobs:
         shell: bash
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
-          gh api graphql -F owner=$OWNER -F name=$REPO_NAME -f query=$QUERY
+          gh api graphql -F "owner=$OWNER" -F "name=$REPO_NAME" -f "query=$QUERY"
