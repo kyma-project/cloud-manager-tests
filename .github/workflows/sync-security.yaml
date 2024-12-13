@@ -19,8 +19,14 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: List project items
+      - name: List project items with graphQL
         shell: bash
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
           gh api graphql -F "owner=$OWNER" -F "name=$REPO_NAME" -F "projectNumber=$PROJECT_NUMBER" -f "query=$QUERY"
+
+      - name: List project items with cli
+        shell: bash
+        if: ${{ !cancelled() }}
+        run: |
+          gh project item-list $PROJECT_NUMBER --owner $OWNER --format json
