@@ -6,6 +6,9 @@ env:
   OWNER: kyma-project
   PROJECT_ID: 55
 
+permissions:
+  repository-projects: write
+
 jobs:
   run:
     runs-on: ubuntu-latest
