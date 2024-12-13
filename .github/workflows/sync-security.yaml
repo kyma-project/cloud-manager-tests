@@ -21,4 +21,4 @@ jobs:
       - name: List projects
         shell: bash
         run: |
-          gh project ls --owner $OWNER
+          gh project item-list $PROJECT_ID --owner $OWNER
