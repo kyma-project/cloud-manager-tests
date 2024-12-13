@@ -5,6 +5,7 @@ on:
 env:
   OWNER: kyma-project
   PROJECT_ID: 55
+  REPO_NAME: cloud-manager-tests
 
 permissions:
   repository-projects: write
@@ -18,7 +19,8 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: List projects
+      - name: List project items
         shell: bash
         run: |
-          gh project item-list $PROJECT_ID --owner $OWNER
+          QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
+          gh api graphql -F owner=$OWNER -F name=$REPO_NAME -f query=$QUERY
