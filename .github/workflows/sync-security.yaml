@@ -6,6 +6,7 @@ env:
   OWNER: kyma-project
   PROJECT_NUMBER: 55
   REPO_NAME: cloud-manager-tests
+  GH_REPO: kyma-project/cloud-manager-tests
 
 permissions:
   repository-projects: write
@@ -29,4 +30,5 @@ jobs:
         shell: bash
         if: ${{ !cancelled() }}
         run: |
-          gh project item-list $PROJECT_NUMBER --owner $OWNER --format json
+          echo "gh project item-list $PROJECT_NUMBER --owner $OWNER --format json"
+          gh project item-list "$PROJECT_NUMBER" --format json
