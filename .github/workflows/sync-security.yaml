@@ -31,4 +31,4 @@ jobs:
         if: ${{ !cancelled() }}
         run: |
           echo "gh project item-list $PROJECT_NUMBER --owner $OWNER --format json"
-          gh project item-list "$PROJECT_NUMBER" --format json
+          gh project item-list "$PROJECT_NUMBER" --owner "$OWNER" --format json
