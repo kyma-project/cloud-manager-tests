@@ -1,0 +1,18 @@
+name: Sync Security
+on:
+  workflow_dispatch:
+
+env:
+  OWNER: kyma-project
+  PROJECT_ID: 55
+
+jobs:
+  run:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: List projects
+        shell: bash
+        run: |
+          gh project ls --owner $OWNER
