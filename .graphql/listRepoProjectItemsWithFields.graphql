@@ -1,7 +1,7 @@
 
-query listRepoProjectItemsWithFields($owner: String!, $name: String!) {
+query listRepoProjectItemsWithFields($owner: String!, $name: String!, $projectNumber: Int!) {
     repository(owner: $owner, name: $name) {
-        projectV2(number: 55) {
+        projectV2(number: $projectNumber) {
             items {
                 nodes {
                     id

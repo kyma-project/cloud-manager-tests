@@ -4,7 +4,7 @@ on:
 
 env:
   OWNER: kyma-project
-  PROJECT_ID: 55
+  PROJECT_NUMBER: 55
   REPO_NAME: cloud-manager-tests
 
 permissions:
@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       GH_DEBUG: "1"
-      GH_TOKEN: ${{ github.token }}
+      GH_TOKEN: ${{ secrets.PROJECT_PAT }}
     steps:
       - uses: actions/checkout@v4
 
@@ -23,4 +23,4 @@ jobs:
         shell: bash
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
-          gh api graphql -F "owner=$OWNER" -F "name=$REPO_NAME" -f "query=$QUERY"
+          gh api graphql -F "owner=$OWNER" -F "name=$REPO_NAME" -F "projectNumber=$PROJECT_NUMBER" -f "query=$QUERY"
