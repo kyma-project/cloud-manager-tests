@@ -22,6 +22,14 @@ jobs:
         run: |
           echo "${{ github.api_url }}"
 
+      - name: Print github.com auth status
+        shell: bash
+        env:
+          GH_DEBUG: "1"
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }}
+        run: |
+          gh auth status
+
       - name: List github.com project items with graphQL
         shell: bash
         env:
