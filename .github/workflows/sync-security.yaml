@@ -29,7 +29,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PROJECT_PAT }}
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
-          gh api graphql -F owner="$OWNER" -F name="$REPO" -F projectNumber=$PROJECT_NUM --paginate --slurp -f "query=$QUERY" -f "query=$QUERY" > items.json
+          gh api graphql -F owner="$OWNER" -F name="$REPO" -F projectNumber=$PROJECT_NUM --paginate --slurp -f query="$QUERY" > items.json
           jq . items.json
 
       - uses: actions/create-github-app-token@v1
