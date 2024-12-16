@@ -78,6 +78,9 @@ jobs:
 
       - name: Sync project items
         uses: ./.github/actions/sync-security
+        env:
+          GH_DEBUG: "1"
+          GH_TOKEN: ${{ secrets.PROJECT_PAT }}
         with:
           project_num: ${{ env.PROJECT_NUM }}
           owner: ${{ env.OWNER }}
