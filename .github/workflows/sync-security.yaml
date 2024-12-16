@@ -82,4 +82,4 @@ jobs:
           project_num: ${{ env.PROJECT_NUM }}
           owner: ${{ env.OWNER }}
           repo: ${{ env.REPO }}
-          dryRun: 'true'
+          dryRun: 'false'
