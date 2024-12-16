@@ -192,11 +192,4 @@ async function main() {
     }
 }
 
-process.env.INPUT_ISSUES = '../../../tmp/issues.json';
-process.env.INPUT_ITEMS = '../../../tmp/items.json';
-process.env.INPUT_EXTERNALISSUELINKFIELDNAME = 'External Issue Link';
-process.env.INPUT_PROJECT_NUM = '55';
-process.env.INPUT_OWNER = 'kyma-project';
-process.env.INPUT_REPO = 'cloud-manager-tests';
-
 main();
