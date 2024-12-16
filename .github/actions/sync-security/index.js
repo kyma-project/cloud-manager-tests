@@ -83,7 +83,7 @@ async function run() {
     console.log(util.inspect(items, undefined, 5));
     console.log('--------------------------------------------');
 
-    const fields = await listFields(projectNum, owner);
+    const fields = project.fields.nodes;
     const externalIssueLinkField = findFieldByName(fields, externalIssueLinkFieldName);
 
     for (let issue of issues) {
@@ -125,15 +125,6 @@ function findFieldByName(fields, name) {
             return field;
         }
     }
-}
-
-async function listFields(projectNum, owner) {
-    const cmd = `gh project field-list ${projectNum} --owner ${owner} --format json`;
-    const {stdout, stderr} = await exec(cmd, {
-        maxBuffer: 1024 * 1024 * 1024,
-    });
-    const txt = toStr(stdout);
-    return JSON.parse(txt).fields;
 }
 
 async function updateItemFieldText(projectId, itemId, fieldId, text) {

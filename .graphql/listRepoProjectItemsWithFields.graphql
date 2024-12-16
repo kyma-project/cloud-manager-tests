@@ -3,6 +3,19 @@ query listRepoProjectItemsWithFields($owner: String!, $name: String!, $projectNu
     repository(owner: $owner, name: $name) {
         projectV2(number: $projectNumber) {
             id
+            fields (first: 100) {
+                nodes {
+                    __typename
+                    ... on ProjectV2Field {
+                        id
+                        name
+                    }
+                    ... on ProjectV2SingleSelectField {
+                        id
+                        name
+                    }
+                }
+            }
             items (first: 100, after: $endCursor) {
                 pageInfo {
                     startCursor
