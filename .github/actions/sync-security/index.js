@@ -56,6 +56,8 @@ let dryRun = false;
 
 async function run() {
     dryRun = core.getBooleanInput('dryRun');
+    console.log(`Dry-run: ${dryRun}`);
+
     const rootDir = await getRootDir();
     const owner = getInputOwner();
     const repo = getInputRepo();
@@ -76,12 +78,13 @@ async function run() {
     const project = await loadProject(rootDir);
     const items = project.items.nodes;
 
-    console.log(`Issues loaded: ${issues.length}`)
+    console.log(`::group::Issues loaded: ${issues.length}`)
     console.log(util.inspect(issues, undefined, 5));
-    console.log('--------------------------------------------');
-    console.log(`Items loaded: ${items.length}`);
+    console.log('::endgroup::');
+
+    console.log(`::group::Items loaded: ${items.length}`);
     console.log(util.inspect(items, undefined, 5));
-    console.log('--------------------------------------------');
+    console.log('::endgroup::');
 
     const fields = project.fields.nodes;
     const externalIssueLinkField = findFieldByName(fields, externalIssueLinkFieldName);
