@@ -1,0 +1,7 @@
+# download it from https://docs.github.com/en/graphql/overview/public-schema
+schema: schema.docs.graphql
+documents: '**/*.graphql'
+extensions:
+  endpoints:
+    gh:
+      url: https://api.github.com/graphql

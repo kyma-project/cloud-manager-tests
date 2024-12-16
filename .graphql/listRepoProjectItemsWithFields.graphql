@@ -1,8 +1,15 @@
 
-query listRepoProjectItemsWithFields($owner: String!, $name: String!, $projectNumber: Int!) {
+query listRepoProjectItemsWithFields($owner: String!, $name: String!, $projectNumber: Int!, $endCursor: String) {
     repository(owner: $owner, name: $name) {
         projectV2(number: $projectNumber) {
-            items {
+            id
+            items (first: 100, after: $endCursor) {
+                pageInfo {
+                    startCursor
+                    endCursor
+                    hasNextPage
+                }
+                totalCount
                 nodes {
                     id
                     content {

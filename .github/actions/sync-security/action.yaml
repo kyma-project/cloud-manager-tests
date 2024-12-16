@@ -1,0 +1,23 @@
+name: Sync Security
+inputs:
+  project_num:
+    description: Project number where to create items
+    required: true
+  issues:
+    description: Issues json filename
+    required: true
+  owner:
+    description: Org name, defaults to env.GITHUB_REPOSITORY.split('/')[1]
+    required: false
+  repo:
+    description: Repo name, defaults to env.GITHUB_REPOSITORY.split('/')[0]
+    required: false
+  externalIssueLinkFieldName:
+    description: File name for External issue link, defaults to "External Issue Link"
+    default: External Issue Link
+  dryRun:
+    description: Run action in dry-run mode with just prints of the commands that will be executed.
+    default: false
+runs:
+  using: node20
+  main: index.js

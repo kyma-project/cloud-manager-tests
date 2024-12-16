@@ -26,7 +26,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PROJECT_PAT }}
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
-          gh api graphql -F owner='kyma-project' -F name='cloud-manager-tests' -F projectNumber=55 -f "query=$QUERY" > items.json
+          gh api graphql -F owner='kyma-project' -F name='cloud-manager-tests' -F projectNumber=55 --paginate --slurp -f "query=$QUERY" -f "query=$QUERY" > items.json
           jq . items.json
 
       - uses: actions/create-github-app-token@v1
@@ -51,14 +51,19 @@ jobs:
 
           echo "Auth status"
           gh auth status || true
-          
+
           echo "Issue list"
           gh issue list \
             -R kyma/security-scans-modular \
             -S 'is:open is:issue archived:false label:team/phoenix' \
             --json id,title,url,labels \
+            -L 10000 \
             > issues.json
 
           echo "Cat"
-          cat issues.json
+          jq . issues.json
 
+      - name: Sync project items
+        uses: ./.github/actions/sync-security
+        with:
+          issues:
