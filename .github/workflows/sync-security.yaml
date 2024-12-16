@@ -4,6 +4,9 @@ on:
 
 env:
   APP_ID: "1228"
+  PROJECT_NUM: "55"
+  OWNER: "kyma-project"
+  REPO: "cloud-manager-tests"
 
 permissions:
   repository-projects: write
@@ -26,7 +29,7 @@ jobs:
           GH_TOKEN: ${{ secrets.PROJECT_PAT }}
         run: |
           QUERY=$(cat .graphql/listRepoProjectItemsWithFields.graphql)
-          gh api graphql -F owner='kyma-project' -F name='cloud-manager-tests' -F projectNumber=55 --paginate --slurp -f "query=$QUERY" -f "query=$QUERY" > items.json
+          gh api graphql -F owner="$OWNER" -F name="$REPO" -F projectNumber=$PROJECT_NUM --paginate --slurp -f "query=$QUERY" -f "query=$QUERY" > items.json
           jq . items.json
 
       - uses: actions/create-github-app-token@v1
@@ -63,7 +66,20 @@ jobs:
           echo "Cat"
           jq . issues.json
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: npm install
+        working-directory: ./.github/actions/sync-security
+        shell: bash
+        run: |
+          npm install
+
       - name: Sync project items
         uses: ./.github/actions/sync-security
         with:
-          issues:
+          project_num: ${{ env.PROJECT_NUM }}
+          owner: ${{ env.OWNER }}
+          repo: ${{ env.REPO }}
+          dryRun: 'true'

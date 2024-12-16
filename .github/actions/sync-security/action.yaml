@@ -6,6 +6,11 @@ inputs:
   issues:
     description: Issues json filename
     required: true
+    default: issues.json
+  items:
+    description: Project items json filename
+    required: true
+    default: items.json
   owner:
     description: Org name, defaults to env.GITHUB_REPOSITORY.split('/')[1]
     required: false
@@ -17,7 +22,7 @@ inputs:
     default: External Issue Link
   dryRun:
     description: Run action in dry-run mode with just prints of the commands that will be executed.
-    default: false
+    default: "false"
 runs:
   using: node20
   main: index.js
